@@ -4,7 +4,7 @@
     "afkstage": 4,
     "PVP": 5,
     "DreamRealm": 3,
-    "faction": 2,
+    "faction": 3,
     "image": "images/Hero_Eironn_Ult.webp",
     "meta": { "role": "DPS" }
   },
