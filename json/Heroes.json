@@ -1,10 +1,10 @@
 [
   {
     "name": "エルロン",
-    "afkstage": 5,
+    "afkstage": 4,
     "PVP": 5,
-    "DreamRealm": 1,
-    "faction": 3,
+    "DreamRealm": 3,
+    "faction": 2,
     "image": "images/Hero_Eironn_Ult.webp",
     "meta": { "role": "DPS" }
   },
