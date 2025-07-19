@@ -1,9 +1,19 @@
 [
   {
+    "name": "アタランテ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Atalanta.png",
+    "meta": { "role": "DPS" }
+  },
+
+  {
     "name": "エルロン",
     "afkstage": 5,
     "PVP": 5,
-    "DreamRealm": 2,
+    "DreamRealm": 1,
     "faction": 3,
     "image": "images/Hero_Eironn_Ult.webp",
     "meta": { "role": "DPS" }
