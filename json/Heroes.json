@@ -1,0 +1,20 @@
+[
+  {
+    "name": "エルロン",
+    "afkstage": 4,
+    "PVP": 5,
+    "DreamRealm": 3,
+    "faction": 2,
+    "image": "images/Hero_Eironn_Ult.webp",
+    "meta": { "role": "DPS" }
+  },
+  {
+    "name": "インドラ",
+    "afkstage": 2,
+    "PVP": 3,
+    "DreamRealm": 5,
+    "faction": 4,
+    "image": "images/Hero_Indris_Ult.webp",
+    "meta": { "role": "Burst" }
+  }
+]
