@@ -116,11 +116,11 @@ mark{
       <input id="displayCount" type="range" min="10" max="200" step="10" value="100">
     </label>
 
-    <label class="inline"><span class="caption">AFK最小</span><input id="fAfkMin" type="number" min="1" max="5" value="1"></label>
+    <label class="inline"><span class="caption">AFK最小</span><input id="fAfkMin" type="number" min="1" max="5" value="3"></label>
     <label class="inline"><span class="caption">AFK最大</span><input id="fAfkMax" type="number" min="1" max="5" value="5"></label>
-    <label class="inline"><span class="caption">PVP最小</span><input id="fPvpMin" type="number" min="1" max="5" value="1"></label>
+    <label class="inline"><span class="caption">PVP最小</span><input id="fPvpMin" type="number" min="1" max="5" value="3"></label>
     <label class="inline"><span class="caption">PVP最大</span><input id="fPvpMax" type="number" min="1" max="5" value="5"></label>
-    <label class="inline"><span class="caption">幻影最小</span><input id="fDrMin" type="number" min="1" max="5" value="1"></label>
+    <label class="inline"><span class="caption">幻影最小</span><input id="fDrMin" type="number" min="1" max="5" value="3"></label>
     <label class="inline"><span class="caption">幻影最大</span><input id="fDrMax" type="number" min="1" max="5" value="5"></label>
 
     <div class="faction-group" id="factionRadios">
@@ -552,9 +552,9 @@ displayCountEl.addEventListener('input',rebuild);
 factionRadios.forEach(r=>r.addEventListener('change',rebuild));
 btnFilterReset.addEventListener('click',()=>{
   fName.value='';
-  fAfkMin.value=1; fAfkMax.value=5;
-  fPvpMin.value=1; fPvpMax.value=5;
-  fDrMin.value=1; fDrMax.value=5;
+  fAfkMin.value=3; fAfkMax.value=5;
+  fPvpMin.value=3; fPvpMax.value=5;
+  fDrMin.value=3; fDrMax.value=5;
   document.querySelector('input[name="factionFilter"][value="all"]').checked=true;
   sortState={key:null,dir:1};
   GEOM_SCALE = INITIAL_GEOM_SCALE;
