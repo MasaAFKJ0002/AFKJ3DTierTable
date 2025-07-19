@@ -83,7 +83,6 @@ mark{
 }
 #metricMatrix th,#metricMatrix td{
   border:1px solid #333;padding:3px 6px;white-space:nowrap;
-  /* 左揃えに変更 */
   text-align:left;
 }
 #metricMatrix thead th{background:#202020;font-weight:600;}
@@ -144,8 +143,8 @@ mark{
         </thead>
         <tbody>
           <tr><th>幻影の域</th><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に入っていない(0回)。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に1回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に2回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に3回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に4回以上入っている。</td></tr>
-          <tr><th>PVP</th><td>"某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて入っていない(0回)。</td><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて1回入っている。</td><td>"某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて2回入っている。</td><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて3回入っている。</td><td>"某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて4回以上入っている。</td></tr>
-          <tr><th>AFKステージ</th><td>保有していなくともステージを進める上で問題にならない。</td><td>ステージを進める上で体感1割以上使用している。</td><td>ステージを進める上で体感2割以上使用している。</td><td>ステージを進める上で体感3割以上使用している。</td><td>ステージを進める上で体感4割以上使用している。</td></tr>
+          <tr><th>PVP</th><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて入っていない(0回)。</td><td>直近5週で1回入っている。</td><td>直近5週で2回入っている。</td><td>直近5週で3回入っている。</td><td>直近5週で4回以上入っている。</td></tr>
+          <tr><th>AFKステージ</th><td>保有していなくともステージを進める上で問題にならない。</td><td>体感1割以上使用。</td><td>体感2割以上使用。</td><td>体感3割以上使用。</td><td>体感4割以上使用。</td></tr>
         </tbody>
       </table>
     </div>
@@ -392,14 +391,24 @@ function getFilter(){
     faction:getSelectedFaction()
   };
 }
+
+/* === 修正済 passFilter === */
 function passFilter(p,f){
+  const hasName = !!f.nameQuery;
+  if(hasName){
+    // 名前検索時：数値レンジ無視・陣営 + 名前のみ
+    if(f.faction!=='all' && p.faction!==+f.faction) return false;
+    if(!normalizeName(p.name).includes(f.nameQuery)) return false;
+    return true;
+  }
+  // 通常（名前空）: 数値レンジ + 陣営
   if(!(p.afkstage>=f.afkMin && p.afkstage<=f.afkMax &&
        p.PVP>=f.pvpMin && p.PVP<=f.pvpMax &&
        p.DreamRealm>=f.drMin && p.DreamRealm<=f.drMax)) return false;
   if(f.faction!=='all' && p.faction!==+f.faction) return false;
-  if(f.nameQuery && !normalizeName(p.name).includes(f.nameQuery)) return false;
   return true;
 }
+
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function highlight(text,q){
   if(!text) return '';
