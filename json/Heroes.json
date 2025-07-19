@@ -7,24 +7,5 @@
     "faction": 1,
     "image": "images/Atalanta.png",
     "meta": { "role": "DPS" }
-  },
-
-  {
-    "name": "エルロン",
-    "afkstage": 5,
-    "PVP": 5,
-    "DreamRealm": 1,
-    "faction": 3,
-    "image": "images/Hero_Eironn_Ult.webp",
-    "meta": { "role": "DPS" }
-  },
-  {
-    "name": "インドラ",
-    "afkstage": 2,
-    "PVP": 3,
-    "DreamRealm": 5,
-    "faction": 4,
-    "image": "images/Hero_Indris_Ult.webp",
-    "meta": { "role": "Burst" }
   }
 ]
