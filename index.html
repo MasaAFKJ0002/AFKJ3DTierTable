@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>AFKJ Tier表-3D</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{
+  --bg:#111;--border:#444;--accent:#ff44ff;--txt:#eee;--blur:4px;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+}
+html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--txt);font-family:var(--font);}
+body{display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
+#topBar{
+  position:relative;z-index:20;
+  flex:0 0 auto;background:rgba(0,0,0,.55);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(var(--blur));padding:8px 14px 10px;display:flex;flex-direction:column;gap:8px;
+  font-size:12px;line-height:1.4;
+}
+.section-title{font-weight:600;margin-right:8px;white-space:nowrap}
+.controls-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+label.inline{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#ccc}
+label.inline span.caption{font-weight:600;color:#ddd}
+.metric-badge{
+  display:inline-block;padding:2px 6px;border:1px solid #666;border-radius:4px;
+  background:#222;font-size:11px;min-width:52px;text-align:center
+}
+input[type=range]{width:160px}
+input[type=number],input[type=text]{
+  background:#222;color:#eee;border:1px solid #555;border-radius:4px;
+  padding:4px 6px;font-size:11px;
+}
+input[type=text]{min-width:140px}
+input[type=text]:focus,input[type=number]:focus{
+  outline:1px solid var(--accent);box-shadow:0 0 0 2px rgba(255,68,255,.35);
+}
+button{
+  background:#222;border:1px solid #666;color:#eee;font-size:11px;
+  padding:4px 10px;border-radius:4px;cursor:pointer
+}
+button:hover{background:#333}
+#viewerContainer{position:relative;flex:1 1 auto;min-height:320px;overflow:hidden;}
+#threeContainer{position:absolute;inset:0;z-index:0;}
+#tooltip{
+  position:fixed;pointer-events:none;padding:4px 7px;background:rgba(0,0,0,.75);
+  border:1px solid #ff66ff;border-radius:4px;font-size:11px;white-space:nowrap;color:#fff;
+  z-index:200;display:none
+}
+#bottomPanel{
+  flex:0 0 auto;background:rgba(0,0,0,.55);border-top:1px solid var(--border);
+  backdrop-filter:blur(var(--blur));display:flex;flex-direction:column;
+  transition:height .25s;overflow:hidden;
+}
+#bottomPanelHeader{display:flex;align-items:center;gap:12px;padding:4px 14px 2px;font-size:12px;}
+#toggleListBtn{margin-left:auto}
+#dataTableWrapper{flex:1 1 auto;overflow:auto;padding:0 14px 8px;}
+table{width:100%;border-collapse:collapse;font-size:11px;background:#181818;}
+table thead th{
+  position:sticky;top:0;background:#222;font-weight:600;
+  padding:6px 6px;border-bottom:1px solid #333;text-align:right;
+}
+table thead th:first-child,table tbody td:first-child{text-align:left}
+table thead th[data-sort-key]{cursor:pointer;}
+table thead th[data-sort-key]:hover{background:#2b2b2b;}
+table tbody td{padding:4px 6px;border-bottom:1px solid #222;text-align:right;white-space:nowrap}
+.no-data{padding:10px 4px;color:#aaa;font-size:11px;text-align:center}
+#dataTableWrapper::-webkit-scrollbar{width:10px}
+#dataTableWrapper::-webkit-scrollbar-track{background:#181818}
+#dataTableWrapper::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
+.faction-group{display:flex;align-items:center;gap:6px;font-size:11px}
+.faction-group label{display:flex;align-items:center;gap:2px;cursor:pointer}
+.faction-group input[type=radio]{accent-color:#ff44ff;cursor:pointer}
+.status-badge{margin-left:8px;font-size:11px;color:#aaa;}
+.status-error{color:#ff6b6b;font-weight:600;}
+mark{
+  background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;
+}
+
+/* 指標マトリクス */
+#metricMatrixWrapper{flex:1 1 100%;width:100%;padding:2px 0 0;overflow-x:auto;}
+#metricMatrix{
+  border-collapse:collapse;font-size:10px;background:#181818;min-width:0;margin-top:4px;table-layout:auto;
+}
+#metricMatrix th,#metricMatrix td{
+  border:1px solid #333;padding:3px 6px;white-space:nowrap;
+  /* 左揃えに変更 */
+  text-align:left;
+}
+#metricMatrix thead th{background:#202020;font-weight:600;}
+#metricMatrix thead th:first-child{width:1%;white-space:nowrap;padding:3px 4px;}
+#metricMatrix tbody th{
+  background:#252525;font-weight:600;width:1%;white-space:nowrap;padding:3px 4px;
+}
+#metricMatrix td{background:#1d1d1d;}
+#metricMatrix td:hover{background:#2a2a2a;}
+</style>
+</head>
+<body>
+
+<div id="topBar">
+  <div class="controls-row" style="gap:16px">
+    <span class="section-title">英雄 四面体評価</span>
+    <div class="metric-badge" id="dynScaleVal">dyn -</div>
+    <div class="metric-badge" id="collisionScaleVal">col -</div>
+    <div class="metric-badge" id="baseScaleVal">base -</div>
+    <div class="metric-badge" id="effectiveScaleVal">eff -</div>
+    <div class="metric-badge" id="countBadge">0/0</div>
+    <span class="status-badge" id="loadStatus">Init...</span>
+  </div>
+
+  <div class="controls-row">
+    <label class="inline"><span class="caption">名前検索</span>
+      <input id="fName" type="text" placeholder="部分一致">
+    </label>
+    <label class="inline"><span class="caption">表示件数</span>
+      <input id="displayCount" type="range" min="10" max="200" step="10" value="100">
+    </label>
+
+    <label class="inline"><span class="caption">AFK最小</span><input id="fAfkMin" type="number" min="1" max="5" value="1"></label>
+    <label class="inline"><span class="caption">AFK最大</span><input id="fAfkMax" type="number" min="1" max="5" value="5"></label>
+    <label class="inline"><span class="caption">PVP最小</span><input id="fPvpMin" type="number" min="1" max="5" value="1"></label>
+    <label class="inline"><span class="caption">PVP最大</span><input id="fPvpMax" type="number" min="1" max="5" value="5"></label>
+    <label class="inline"><span class="caption">幻影最小</span><input id="fDrMin" type="number" min="1" max="5" value="1"></label>
+    <label class="inline"><span class="caption">幻影最大</span><input id="fDrMax" type="number" min="1" max="5" value="5"></label>
+
+    <div class="faction-group" id="factionRadios">
+      <span style="font-weight:600;">陣営:</span>
+      <label><input type="radio" name="factionFilter" value="all" checked>All</label>
+      <label><input type="radio" name="factionFilter" value="1">ブライト</label>
+      <label><input type="radio" name="factionFilter" value="2">ババリア</label>
+      <label><input type="radio" name="factionFilter" value="3">ヴェルディア</label>
+      <label><input type="radio" name="factionFilter" value="4">グレイヴボーン</label>
+      <label><input type="radio" name="factionFilter" value="5">セレスチアル</label>
+      <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
+    </div>
+
+    <div id="metricMatrixWrapper">
+      <table id="metricMatrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>幻影の域</th><td>Ex1</td><td>Ex2</td><td>Ex3</td><td>Ex4</td><td>Ex5</td></tr>
+          <tr><th>PVP</th><td>Ex1</td><td>Ex2</td><td>Ex3</td><td>Ex4</td><td>Ex5</td></tr>
+          <tr><th>AFKステージ</th><td>Ex1</td><td>Ex2</td><td>Ex3</td><td>Ex4</td><td>Ex5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button id="btnFilterReset">フィルタReset</button>
+    <button id="btnRebuild">再計算</button>
+  </div>
+</div>
+
+<div id="viewerContainer">
+  <div id="threeContainer"></div>
+  <div id="tooltip"></div>
+</div>
+
+<div id="bottomPanel">
+  <div id="bottomPanelHeader">
+    <strong>英雄一覧 (フィルタ後)</strong>
+    <button id="toggleListBtn">一覧▲</button>
+  </div>
+  <div id="dataTableWrapper">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>名前</th>
+          <th>陣営</th>
+          <th data-sort-key="afkstage">AFK</th>
+          <th data-sort-key="PVP">PVP</th>
+          <th data-sort-key="DreamRealm">幻影</th>
+          <th data-sort-key="sum">合計</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* ==== 内部幾何倍率（UI無し） ==== */
+const INITIAL_GEOM_SCALE = 1.25;
+let GEOM_SCALE = INITIAL_GEOM_SCALE;
+
+/* ==== 基本パラメータ ==== */
+const IMG_W=180, IMG_H=200, REF_IMG_H=256;
+const SPRITE_SCALE=0.30*(IMG_H/REF_IMG_H);
+const SPACING_FACTOR=1.15, COLLISION_SAFETY=1.02;
+const FACTION_LABEL={1:'ブライト',2:'ババリア',3:'ヴェルディア',4:'グレイヴボーン',5:'セレスチアル',6:'カタストロフ'};
+const COLLAPSED_HEIGHT=110, EXPANDED_HEIGHT=240;
+const VIEW_OFFSET_Y=-0.9;
+const SCALE_FACTOR=10, H=1.2;
+const MIN=1, MAX=5, SAFETY=1.05;
+const MIN_WEIGHT_BASE=SAFETY*SPRITE_SCALE/Math.sqrt(3);
+const MIN_DYN_SCALE=0.6, MAX_DYN_SCALE=2.2;
+
+/* ==== クラスタ分離 ==== */
+const CLUSTER_EPS = 1e-6;
+const CLUSTER_SEP_RADIUS = 1.15;
+
+/* ==== 状態 ==== */
+let sortState={key:null,dir:1};
+let FULL_DATA=[];
+
+/* ==== DOM ==== */
+const threeContainer=document.getElementById('threeContainer');
+const bottomPanel=document.getElementById('bottomPanel'); bottomPanel.style.height=COLLAPSED_HEIGHT+'px';
+const toggleListBtn=document.getElementById('toggleListBtn');
+const loadStatus=document.getElementById('loadStatus');
+const displayCountEl=document.getElementById('displayCount');
+const dynScaleVal=document.getElementById('dynScaleVal');
+const collisionScaleVal=document.getElementById('collisionScaleVal');
+const baseScaleVal=document.getElementById('baseScaleVal');
+const effectiveScaleVal=document.getElementById('effectiveScaleVal');
+const countBadge=document.getElementById('countBadge');
+const fAfkMin=document.getElementById('fAfkMin'), fAfkMax=document.getElementById('fAfkMax');
+const fPvpMin=document.getElementById('fPvpMin'), fPvpMax=document.getElementById('fPvpMax');
+const fDrMin=document.getElementById('fDrMin'), fDrMax=document.getElementById('fDrMax');
+const btnFilterReset=document.getElementById('btnFilterReset');
+const btnRebuild=document.getElementById('btnRebuild');
+const dataTableBody=document.querySelector('#dataTable tbody');
+const factionRadios=document.querySelectorAll('input[name="factionFilter"]');
+const fName=document.getElementById('fName');
+const tooltip=document.getElementById('tooltip');
+
+/* ==== Three.js ==== */
+let scene, renderer, camera, controls, pivot, modelGroup, productGroup;
+let A,B,C,D,G;
+
+/* ====== 初期化 ====== */
+function initThree(){
+  scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);
+  threeContainer.appendChild(renderer.domElement);
+
+  camera=new THREE.PerspectiveCamera(52,threeContainer.clientWidth/threeContainer.clientHeight,0.05,500);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;
+
+  pivot=new THREE.Group(); scene.add(pivot);
+  modelGroup=new THREE.Group(); pivot.add(modelGroup);
+  pivot.position.y=VIEW_OFFSET_Y;
+
+  A=new THREE.Vector3(0,0,0);
+  B=new THREE.Vector3(1,0,0);
+  C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0);
+  D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
+  G=new THREE.Vector3().add(A).add(B).add(C).add(D).multiplyScalar(0.25);
+
+  buildTetraWire();
+  modelGroup.position.sub(G);
+  buildLabels();
+  productGroup=new THREE.Group(); modelGroup.add(productGroup);
+
+  camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*SCALE_FACTOR));
+  controls.target.set(0,0,0); controls.update();
+  animate();
+}
+
+function buildTetraWire(){
+  const gBase=new THREE.BufferGeometry().setFromPoints([A,B,C]); gBase.setIndex([0,1,2]);
+  modelGroup.add(new THREE.Mesh(gBase,new THREE.MeshBasicMaterial({color:0xff00ff,side:THREE.DoubleSide,transparent:true,opacity:0.25})));
+  const gEdges=new THREE.BufferGeometry().setFromPoints([A,B,B,C,C,A,A,D,B,D,C,D]);
+  modelGroup.add(new THREE.LineSegments(gEdges,new THREE.LineBasicMaterial({color:0xff44ff})));
+  const matGrid=new THREE.LineBasicMaterial({color:0xff00ff,transparent:true,opacity:0.20});
+  for(let i=1;i<=4;i++){
+    const t=i/5;
+    const pA=A.clone().lerp(D,t), pB=B.clone().lerp(D,t), pC=C.clone().lerp(D,t);
+    const g=new THREE.BufferGeometry().setFromPoints([pA,pB,pC,pA]);
+    modelGroup.add(new THREE.Line(g,matGrid));
+  }
+}
+function makeTextSprite(txt){
+  const cvs=document.createElement('canvas'), ctx=cvs.getContext('2d'), fs=64;
+  ctx.font='bold '+fs+'px sans-serif'; const w=ctx.measureText(txt).width;
+  cvs.width=w+32; cvs.height=fs+32;
+  ctx.font='bold '+fs+'px sans-serif'; ctx.fillStyle='#fff'; ctx.textBaseline='top'; ctx.fillText(txt,16,0);
+  const tex=new THREE.CanvasTexture(cvs);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
+  const scale=0.35; sp.scale.set(scale*cvs.width/cvs.height,scale,1); return sp;
+}
+function buildLabels(){
+  modelGroup.add(
+    (()=>{const s=makeTextSprite('AFKステージ'); s.position.copy(A).add(new THREE.Vector3(-0.12,-0.04,0)); return s;})(),
+    (()=>{const s=makeTextSprite('PVP'); s.position.copy(C).add(new THREE.Vector3(0,0.06,0)); return s;})(),
+    (()=>{const s=makeTextSprite('幻影の域'); s.position.copy(B).add(new THREE.Vector3(0.12,0,0)); return s;})(),
+    (()=>{const s=makeTextSprite('総合'); s.position.copy(D).add(new THREE.Vector3(0,0.12,0.02)); return s;})()
+  );
+}
+
+/* ====== 数学関数 ====== */
+function norm(v){return (v-MIN)/(MAX-MIN);}
+function sumNorm(sum){return (sum-3*MIN)/(3*MAX-3*MIN);}
+function basePoint(p){
+  let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
+  let s=wa+wb+wc; if(s===0){wa=wb=wc=1/3; s=1;}
+  wa/=s; wb/=s; wc/=s;
+  const floor=MIN_WEIGHT_BASE;
+  if(wa<floor||wb<floor||wc<floor){
+    wa=Math.max(wa,floor); wb=Math.max(wb,floor); wc=Math.max(wc,floor);
+    const s2=wa+wb+wc; wa/=s2; wb/=s2; wc/=s2;
+  }
+  return new THREE.Vector3().addScaledVector(A,wa).addScaledVector(B,wb).addScaledVector(C,wc);
+}
+function position3D(p){return basePoint(p).lerp(D,sumNorm(p.sum));}
+function computeDynamicScale(arr){
+  if(!arr.length) return 1;
+  let rMax=0;
+  for(const p of arr){
+    const bp=basePoint(p);
+    const r=Math.hypot(bp.x-G.x,bp.y-G.y);
+    if(r>rMax) rMax=r;
+  }
+  if(rMax<=0) return 1;
+  const R_base=1/Math.sqrt(3);
+  let dyn=R_base/rMax;
+  return Math.min(Math.max(dyn,MIN_DYN_SCALE),MAX_DYN_SCALE);
+}
+function computeCollisionExpand(arr, baseScale){
+  if(arr.length <= 1) return 1;
+  const pts=arr.map(p=>basePoint(p));
+  let minDist=Infinity;
+  for(let i=0;i<pts.length;i++){
+    const pi=pts[i];
+    for(let j=i+1;j<pts.length;j++){
+      const pj=pts[j];
+      const dx=pi.x-pj.x, dy=pi.y-pj.y;
+      const d=Math.hypot(dx,dy);
+      if(d<minDist) minDist=d;
+      if(minDist===0) break;
+    }
+    if(minDist===0) break;
+  }
+  const EPS_MIN=1e-4;
+  if(!isFinite(minDist) || minDist<=EPS_MIN) return 1;
+  const spriteWorldDiameter=SPRITE_SCALE*GEOM_SCALE*baseScale*2;
+  const required=spriteWorldDiameter*SPACING_FACTOR;
+  if(required<=minDist) return 1;
+  let expand=(required/minDist)*COLLISION_SAFETY;
+  const MAX_COLLISION_EXPAND=3.0;
+  if(!isFinite(expand) || expand>MAX_COLLISION_EXPAND) expand=MAX_COLLISION_EXPAND;
+  if(expand<1) expand=1;
+  return expand;
+}
+
+/* ====== クラスタ分離 ====== */
+function separateClusters(sprites, finalScale){
+  if(sprites.length <= 1) return;
+  const clusters = new Map();
+  for(const s of sprites){
+    const p = s.position;
+    const key = Math.round(p.x/CLUSTER_EPS)+'_'+Math.round(p.y/CLUSTER_EPS)+'_'+Math.round(p.z/CLUSTER_EPS);
+    if(!clusters.has(key)) clusters.set(key, []);
+    clusters.get(key).push(s);
+  }
+  const worldSpriteRadius = SPRITE_SCALE * finalScale;
+  clusters.forEach(list=>{
+    if(list.length < 2) return;
+    const n=list.length;
+    const baseR=worldSpriteRadius*CLUSTER_SEP_RADIUS*(1+0.12*(n-2));
+    list.forEach((s,i)=>{
+      const ang=(2*Math.PI*i)/n;
+      s.position.x += Math.cos(ang)*baseR;
+      s.position.y += Math.sin(ang)*baseR;
+    });
+  });
+}
+
+/* ====== フィルタ ====== */
+function normalizeName(s){
+  if(!s) return '';
+  return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
+          .replace(/[\u30A1-\u30F6]/g,k=>String.fromCharCode(k.charCodeAt(0)-0x60))
+          .toLowerCase();
+}
+function getSelectedFaction(){const r=[...factionRadios].find(r=>r.checked); return r? r.value:'all';}
+function getFilter(){
+  return {
+    nameQuery:normalizeName(fName.value.trim()),
+    afkMin:+fAfkMin.value, afkMax:+fAfkMax.value,
+    pvpMin:+fPvpMin.value, pvpMax:+fPvpMax.value,
+    drMin:+fDrMin.value,   drMax:+fDrMax.value,
+    faction:getSelectedFaction()
+  };
+}
+function passFilter(p,f){
+  if(!(p.afkstage>=f.afkMin && p.afkstage<=f.afkMax &&
+       p.PVP>=f.pvpMin && p.PVP<=f.pvpMax &&
+       p.DreamRealm>=f.drMin && p.DreamRealm<=f.drMax)) return false;
+  if(f.faction!=='all' && p.faction!==+f.faction) return false;
+  if(f.nameQuery && !normalizeName(p.name).includes(f.nameQuery)) return false;
+  return true;
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function highlight(text,q){
+  if(!text) return '';
+  if(!q) return escapeHtml(text);
+  const n=normalizeName(text); const i=n.indexOf(q);
+  if(i<0) return escapeHtml(text);
+  return escapeHtml(text.slice(0,i))+'<mark>'+escapeHtml(text.slice(i,i+q.length))+'</mark>'+escapeHtml(text.slice(i+q.length));
+}
+
+/* ====== 再構築 ====== */
+const palette=['#ff00ff','#ff33ff','#ff66ff','#ff00cc','#ff1493','#ff55aa','#ff99dd','#cc44ff','#ff22aa','#ffaaee'];
+let lastBaseScale=SCALE_FACTOR, lastCollisionExpand=1;
+
+function rebuild(){
+  if(!productGroup) return;
+  while(productGroup.children.length) productGroup.remove(productGroup.children[0]);
+  dataTableBody.innerHTML='';
+
+  const disp=+displayCountEl.value;
+  const subset=FULL_DATA.slice(0,disp);
+  const filter=getFilter();
+  const filtered=subset.filter(p=>passFilter(p,filter));
+  filtered.forEach(p=>p.sum=p.afkstage+p.PVP+p.DreamRealm);
+
+  if(sortState.key){
+    const k=sortState.key, d=sortState.dir;
+    filtered.sort((a,b)=>(a[k]-b[k])*d);
+  }
+
+  const dyn=computeDynamicScale(filtered);
+  const baseScale=SCALE_FACTOR*dyn;
+  const collisionExpand=computeCollisionExpand(filtered, baseScale*GEOM_SCALE);
+  lastBaseScale=baseScale;
+  lastCollisionExpand=collisionExpand;
+
+  const finalScale=baseScale*GEOM_SCALE*collisionExpand;
+  pivot.scale.set(finalScale,finalScale,finalScale);
+  camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*finalScale));
+
+  const sprites=[];
+  filtered.forEach((p,i)=>{
+    const pos=position3D(p);
+    let sprite;
+    if(p.image){
+      const tex=new THREE.TextureLoader().load(p.image);
+      sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
+    }else{
+      const size=256,cvs=document.createElement('canvas');cvs.width=cvs.height=size;
+      const ctx=cvs.getContext('2d');
+      ctx.beginPath(); ctx.fillStyle=palette[i%palette.length];
+      ctx.arc(size/2,size/2,size*0.40,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='bold 80px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(p.name.slice(-2),size/2,size/2);
+      sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cvs),transparent:true}));
+    }
+    sprite.position.copy(pos);
+    sprite.scale.set(SPRITE_SCALE,SPRITE_SCALE,SPRITE_SCALE);
+    sprite.userData.product=p;
+    productGroup.add(sprite);
+    sprites.push(sprite);
+
+    const factionLabel=FACTION_LABEL[p.faction]??('F'+p.faction);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${highlight(p.name,filter.nameQuery)}</td>
+                  <td>${escapeHtml(factionLabel)}</td>
+                  <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
+    dataTableBody.appendChild(tr);
+  });
+
+  separateClusters(sprites, finalScale);
+
+  if(!filtered.length){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
+    dataTableBody.appendChild(tr);
+  }
+
+  dynScaleVal.textContent=dyn.toFixed(3);
+  const clampedFlag = collisionExpand >= 2.999 ? '*' : '';
+  collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+clampedFlag;
+  baseScaleVal.textContent=baseScale.toFixed(2);
+  effectiveScaleVal.textContent=finalScale.toFixed(2);
+  countBadge.textContent=`${filtered.length}/${disp}`;
+
+  document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
+    const key=th.getAttribute('data-sort-key');
+    const baseText=th.getAttribute('data-base-text')||th.textContent.replace(/[▲▼]/,'').trim();
+    if(!th.getAttribute('data-base-text')) th.setAttribute('data-base-text',baseText);
+    th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼') : baseText;
+  });
+
+  resizeRenderer();
+}
+
+function rebuildEmpty(){
+  dynScaleVal.textContent='1.000';
+  collisionScaleVal.textContent='col 1.000';
+  baseScaleVal.textContent=SCALE_FACTOR.toFixed(2);
+  effectiveScaleVal.textContent=(SCALE_FACTOR*GEOM_SCALE).toFixed(2);
+  countBadge.textContent='0/0';
+  resizeRenderer();
+}
+
+/* ====== データ読込 ====== */
+function isValidRecord(p){
+  return p && typeof p.name==='string' && p.name.length>0 &&
+    Number.isInteger(p.afkstage)&&p.afkstage>=1&&p.afkstage<=5 &&
+    Number.isInteger(p.PVP)&&p.PVP>=1&&p.PVP<=5 &&
+    Number.isInteger(p.DreamRealm)&&p.DreamRealm>=1&&p.DreamRealm<=5 &&
+    Number.isInteger(p.faction)&&p.faction>=1&&p.faction<=6;
+}
+function loadData(){
+  loadStatus.textContent='Loading...';
+  fetch('json/Heroes.json',{cache:'no-store'})
+    .then(r=>{if(!r.ok) throw new Error('HTTP '+r.status); return r.json();})
+    .then(arr=>{
+      FULL_DATA=Array.isArray(arr)?arr.filter(isValidRecord):[];
+      loadStatus.textContent='Loaded '+FULL_DATA.length;
+      rebuild();
+    })
+    .catch(err=>{
+      console.error(err);
+      loadStatus.textContent='Error';
+      loadStatus.classList.add('status-error');
+    });
+}
+
+/* ====== イベント ====== */
+document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const key=th.getAttribute('data-sort-key');
+    if(sortState.key===key){sortState.dir=-sortState.dir;} else {sortState.key=key;sortState.dir=1;}
+    rebuild();
+  });
+});
+displayCountEl.addEventListener('input',rebuild);
+[fAfkMin,fAfkMax,fPvpMin,fPvpMax,fDrMin,fDrMax].forEach(inp=>{
+  inp.addEventListener('input',()=>{
+    const id=inp.id;
+    if(id.endsWith('Min')){
+      const maxEl=document.getElementById(id.replace('Min','Max'));
+      if(+inp.value>+maxEl.value) maxEl.value=inp.value;
+    } else {
+      const minEl=document.getElementById(id.replace('Max','Min'));
+      if(+inp.value<+minEl.value) minEl.value=inp.value;
+    }
+    rebuild();
+  });
+});
+factionRadios.forEach(r=>r.addEventListener('change',rebuild));
+btnFilterReset.addEventListener('click',()=>{
+  fName.value='';
+  fAfkMin.value=1; fAfkMax.value=5;
+  fPvpMin.value=1; fPvpMax.value=5;
+  fDrMin.value=1; fDrMax.value=5;
+  document.querySelector('input[name="factionFilter"][value="all"]').checked=true;
+  sortState={key:null,dir:1};
+  GEOM_SCALE = INITIAL_GEOM_SCALE;
+  rebuild();
+});
+btnRebuild.addEventListener('click',rebuild);
+
+let nameDebTimer=null;
+fName.addEventListener('input',()=>{
+  if(nameDebTimer) clearTimeout(nameDebTimer);
+  nameDebTimer=setTimeout(()=>rebuild(),90);
+});
+function toggleList(){
+  let listExpanded = bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
+  listExpanded=!listExpanded;
+  bottomPanel.style.height=(listExpanded?EXPANDED_HEIGHT:COLLAPSED_HEIGHT)+'px';
+  toggleListBtn.textContent=listExpanded?'一覧▼':'一覧▲';
+  setTimeout(resizeRenderer,260);
+}
+toggleListBtn.addEventListener('click',toggleList);
+
+/* ホバー */
+const raycaster=new THREE.Raycaster(), mouse=new THREE.Vector2();
+addEventListener('mousemove',e=>{
+  if(!camera) return;
+  mouse.x=(e.clientX/window.innerWidth)*2 -1;
+  mouse.y=-(e.clientY/window.innerHeight)*2 +1;
+  raycaster.setFromCamera(mouse,camera);
+  if(!productGroup) return;
+  const hit=raycaster.intersectObjects(productGroup.children,false)[0];
+  if(hit){
+    const p=hit.object.userData.product;
+    if(p){
+      const factionLabel=FACTION_LABEL[p.faction]??('F'+p.faction);
+      tooltip.style.display='block';
+      tooltip.style.left=(e.clientX+12)+'px';
+      tooltip.style.top=(e.clientY+10)+'px';
+      tooltip.textContent=`${p.name} ${factionLabel} AFK${p.afkstage} PVP${p.PVP} 幻${p.DreamRealm} 合${p.sum}`;
+    }
+  } else tooltip.style.display='none';
+});
+
+/* キー回転 */
+addEventListener('keydown',e=>{
+  if(!pivot) return;
+  if(e.code==='KeyQ') pivot.rotation.z+=0.05;
+  if(e.code==='KeyE') pivot.rotation.z-=0.05;
+});
+
+/* リサイズ */
+function resizeRenderer(){
+  if(!renderer||!camera) return;
+  const w=threeContainer.clientWidth,h=threeContainer.clientHeight;
+  if(h===0) return;
+  renderer.setSize(w,h);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize',resizeRenderer);
+
+/* ループ */
+function animate(){
+  requestAnimationFrame(animate);
+  if(controls) controls.update();
+  if(renderer && scene && camera){
+    if(productGroup){
+      productGroup.children.forEach(s=>s.quaternion.copy(camera.quaternion));
+    }
+    renderer.render(scene,camera);
+  }
+}
+
+/* 初期化 */
+function init(){
+  initThree();
+  rebuildEmpty();
+  loadData();
+}
+window.addEventListener('DOMContentLoaded', init);
+
+/* コンソール用:
+   GEOM_SCALE = 1.6; rebuild();
+*/
+</script>
+</body>
+</html>
