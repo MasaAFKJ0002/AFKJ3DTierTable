@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>AFKJ Tier表-3D (スライダー版)</title>
+<title>AFKJ Tier表-3D (陣営2段レイアウト)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 :root{
@@ -78,16 +78,38 @@ table tbody td{padding:4px 6px;border-bottom:1px solid #222;text-align:right;whi
 #dataTableWrapper::-webkit-scrollbar{width:10px}
 #dataTableWrapper::-webkit-scrollbar-track{background:#181818}
 #dataTableWrapper::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
-.faction-group{display:flex;align-items:center;gap:6px;font-size:11px}
-.faction-group label{display:flex;align-items:center;gap:2px;cursor:pointer}
-.faction-group input[type=radio]{accent-color:#ff44ff;cursor:pointer}
 .status-badge{margin-left:8px;font-size:11px;color:#aaa;}
 .status-error{color:#ff6b6b;font-weight:600;}
 mark{
   background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;
 }
 .note-small{font-size:10px;color:#aaa;margin-left:4px}
-.emph{color:#ff94ff;font-weight:600}
+
+/* ★変更: 陣営ラジオ 2段グリッド */
+.faction-wrapper{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:4px 6px;
+  border:1px solid #333;
+  border-radius:6px;
+  background:#1b1b1b;
+}
+.faction-wrapper .faction-title{
+  font-size:11px;font-weight:600;color:#ddd;margin:0;
+}
+.faction-grid{
+  display:grid;
+  grid-template-columns:repeat(3, auto); /* 3列 */
+  grid-auto-rows:auto;
+  gap:4px 10px;
+  align-items:center;
+  font-size:11px;
+}
+.faction-grid label{
+  display:flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap;
+}
+.faction-grid input[type=radio]{accent-color:#ff44ff;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -160,15 +182,18 @@ mark{
       </div>
     </div>
 
-    <div class="faction-group" id="factionRadios">
-      <span style="font-weight:600;">陣営:</span>
-      <label><input type="radio" name="factionFilter" value="all" checked>All</label>
-      <label><input type="radio" name="factionFilter" value="1">ブライト</label>
-      <label><input type="radio" name="factionFilter" value="2">ババリア</label>
-      <label><input type="radio" name="factionFilter" value="3">ヴェルディア</label>
-      <label><input type="radio" name="factionFilter" value="4">グレイヴボーン</label>
-      <label><input type="radio" name="factionFilter" value="5">セレスチアル</label>
-      <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
+    <!-- ★変更: 陣営 2段グリッド -->
+    <div class="faction-wrapper">
+      <p class="faction-title">陣営</p>
+      <div class="faction-grid" id="factionRadios">
+        <label><input type="radio" name="factionFilter" value="all" checked>All</label>
+        <label><input type="radio" name="factionFilter" value="1">ブライト</label>
+        <label><input type="radio" name="factionFilter" value="2">ババリア</label>
+        <label><input type="radio" name="factionFilter" value="3">ヴェルディア</label>
+        <label><input type="radio" name="factionFilter" value="4">グレイヴ</label>
+        <label><input type="radio" name="factionFilter" value="5">セレス</label>
+        <label><input type="radio" name="factionFilter" value="6">カタス</label>
+      </div>
     </div>
 
     <button id="btnFilterReset">フィルタReset</button>
@@ -206,10 +231,10 @@ mark{
 <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
 <script>
+/* 以降の JavaScript は前回と同一です（ロジック変更無し） */
 /* ==== 内部幾何倍率 ==== */
 const INITIAL_GEOM_SCALE = 1.25;
 let GEOM_SCALE = INITIAL_GEOM_SCALE;
-
 /* ==== 基本パラメータ ==== */
 const IMG_W=180, IMG_H=200, REF_IMG_H=256;
 const SPRITE_SCALE=0.30*(IMG_H/REF_IMG_H);
@@ -221,15 +246,10 @@ const SCALE_FACTOR=10, H=1.2;
 const MIN=1, MAX=5, SAFETY=1.05;
 const MIN_WEIGHT_BASE=SAFETY*SPRITE_SCALE/Math.sqrt(3);
 const MIN_DYN_SCALE=0.6, MAX_DYN_SCALE=2.2;
-
-/* クラスタ分離 (Z積層なし) */
 const CLUSTER_EPS=1e-6, CLUSTER_SEP_RADIUS=1.05, CLUSTER_MARGIN_FACTOR=1.08, MIN_RING_RADIUS_RATIO=0.05;
-
 /* 状態 */
-let sortState={key:null,dir:1};
-let FULL_DATA=[];
-
-/* DOM 取得 */
+let sortState={key:null,dir:1}, FULL_DATA=[];
+/* DOM */
 const threeContainer=document.getElementById('threeContainer');
 const bottomPanel=document.getElementById('bottomPanel'); bottomPanel.style.height=COLLAPSED_HEIGHT+'px';
 const toggleListBtn=document.getElementById('toggleListBtn');
@@ -246,55 +266,34 @@ const btnFilterReset=document.getElementById('btnFilterReset');
 const btnRebuild=document.getElementById('btnRebuild');
 const dataTableBody=document.querySelector('#dataTable tbody');
 const tooltip=document.getElementById('tooltip');
-
-/* スライダー参照 */
-const afkMin=document.getElementById('afkMin');
-const afkMax=document.getElementById('afkMax');
-const pvpMin=document.getElementById('pvpMin');
-const pvpMax=document.getElementById('pvpMax');
-const drMin=document.getElementById('drMin');
-const drMax=document.getElementById('drMax');
-const afkMinVal=document.getElementById('afkMinVal');
-const afkMaxVal=document.getElementById('afkMaxVal');
-const pvpMinVal=document.getElementById('pvpMinVal');
-const pvpMaxVal=document.getElementById('pvpMaxVal');
-const drMinVal=document.getElementById('drMinVal');
-const drMaxVal=document.getElementById('drMaxVal');
-
+/* スライダー */
+const afkMin=document.getElementById('afkMin'), afkMax=document.getElementById('afkMax');
+const pvpMin=document.getElementById('pvpMin'), pvpMax=document.getElementById('pvpMax');
+const drMin=document.getElementById('drMin'), drMax=document.getElementById('drMax');
+const afkMinVal=document.getElementById('afkMinVal'), afkMaxVal=document.getElementById('afkMaxVal');
+const pvpMinVal=document.getElementById('pvpMinVal'), pvpMaxVal=document.getElementById('pvpMaxVal');
+const drMinVal=document.getElementById('drMinVal'), drMaxVal=document.getElementById('drMaxVal');
 /* Three.js */
 let scene, renderer, camera, controls, pivot, modelGroup, productGroup;
 let A,B,C,D,G;
 
-/* 初期化 */
 function initThree(){
   scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);
   threeContainer.appendChild(renderer.domElement);
-
   camera=new THREE.PerspectiveCamera(52,threeContainer.clientWidth/threeContainer.clientHeight,0.05,500);
-  controls=new THREE.OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true;
-
+  controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
   pivot=new THREE.Group(); scene.add(pivot);
   modelGroup=new THREE.Group(); pivot.add(modelGroup);
   pivot.position.y=VIEW_OFFSET_Y;
-
-  A=new THREE.Vector3(0,0,0);
-  B=new THREE.Vector3(1,0,0);
-  C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0);
-  D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
+  A=new THREE.Vector3(0,0,0); B=new THREE.Vector3(1,0,0); C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0); D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
   G=new THREE.Vector3().add(A).add(B).add(C).add(D).multiplyScalar(0.25);
-
-  buildTetra();
-  modelGroup.position.sub(G);
-  buildLabels();
+  buildTetra(); modelGroup.position.sub(G); buildLabels();
   productGroup=new THREE.Group(); modelGroup.add(productGroup);
-
   camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*SCALE_FACTOR));
-  controls.target.set(0,0,0); controls.update();
-  animate();
+  controls.target.set(0,0,0); controls.update(); animate();
 }
 function buildTetra(){
   const gBase=new THREE.BufferGeometry().setFromPoints([A,B,C]); gBase.setIndex([0,1,2]);
@@ -326,8 +325,6 @@ function buildLabels(){
     (()=>{const s=makeTextSprite('総合'); s.position.copy(D).add(new THREE.Vector3(0,0.12,0.02)); return s;})()
   );
 }
-
-/* 数学 */
 function norm(v){return (v-MIN)/(MAX-MIN);}
 function sumNorm(sum){return (sum-3*MIN)/(3*MAX-3*MIN);}
 function basePoint(p){
@@ -363,8 +360,7 @@ function computeCollisionExpand(arr, baseScale){
     const pi=pts[i];
     for(let j=i+1;j<pts.length;j++){
       const pj=pts[j];
-      const dx=pi.x-pj.x, dy=pi.y-pj.y;
-      const d=Math.hypot(dx,dy);
+      const d=Math.hypot(pi.x-pj.x,pi.y-pj.y);
       if(d<minDist) minDist=d;
       if(minDist===0) break;
     }
@@ -381,7 +377,6 @@ function computeCollisionExpand(arr, baseScale){
   if(expand<1) expand=1;
   return expand;
 }
-/* クラスタ分離 (Z変更なし) */
 function separateClusters(sprites, finalScale){
   if(sprites.length<=1) return;
   const rIn=Math.sqrt(3)/6;
@@ -400,7 +395,7 @@ function separateClusters(sprites, finalScale){
     let baseR=worldSpriteRadius*CLUSTER_SEP_RADIUS*(1+0.10*(n-2));
     if(baseR>safeMaxRadius) baseR=safeMaxRadius;
     const minAllowed=worldSpriteRadius*MIN_RING_RADIUS_RATIO;
-    if(baseR<minAllowed) return; // 中心重ね許容
+    if(baseR<minAllowed) return;
     list.forEach((s,i)=>{
       const ang=(2*Math.PI*i)/n;
       s.position.x+=baseR*Math.cos(ang);
@@ -408,8 +403,6 @@ function separateClusters(sprites, finalScale){
     });
   });
 }
-
-/* フィルタ */
 function normalizeName(s){
   if(!s) return '';
   return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
@@ -419,7 +412,7 @@ function normalizeName(s){
 function getSelectedFaction(){const r=[...factionRadios].find(r=>r.checked); return r? r.value:'all';}
 function getFilter(){
   return {
-    nameQuery: normalizeName(fName.value.trim()),
+    nameQuery:normalizeName(fName.value.trim()),
     afkMin:+afkMin.value, afkMax:+afkMax.value,
     pvpMin:+pvpMin.value, pvpMax:+pvpMax.value,
     drMin:+drMin.value,   drMax:+drMax.value,
@@ -427,7 +420,6 @@ function getFilter(){
   };
 }
 function passFilter(p,f){
-  // 名前検索が存在する場合は 数値レンジ無視（陣営 + 名前のみ）
   if(f.nameQuery){
     if(f.faction!=='all' && p.faction!==+f.faction) return false;
     return normalizeName(p.name).includes(f.nameQuery);
@@ -446,37 +438,28 @@ function highlight(text,q){
   if(i<0) return escapeHtml(text);
   return escapeHtml(text.slice(0,i))+'<mark>'+escapeHtml(text.slice(i,i+q.length))+'</mark>'+escapeHtml(text.slice(i+q.length));
 }
-
-/* 再構築 */
 const palette=['#ff00ff','#ff33ff','#ff66ff','#ff00cc','#ff1493','#ff55aa','#ff99dd','#cc44ff','#ff22aa','#ffaaee'];
-let lastBaseScale=SCALE_FACTOR, lastCollisionExpand=1;
-
+let lastBaseScale=SCALE_FACTOR,lastCollisionExpand=1;
 function rebuild(){
   if(!productGroup) return;
   while(productGroup.children.length) productGroup.remove(productGroup.children[0]);
   dataTableBody.innerHTML='';
-
   const disp=+displayCountEl.value;
   const subset=FULL_DATA.slice(0,disp);
   const filter=getFilter();
   const filtered=subset.filter(p=>passFilter(p,filter));
   filtered.forEach(p=>p.sum=p.afkstage+p.PVP+p.DreamRealm);
-
   if(sortState.key){
-    const k=sortState.key, d=sortState.dir;
+    const k=sortState.key,d=sortState.dir;
     filtered.sort((a,b)=>(a[k]-b[k])*d);
   }
-
   const dyn=computeDynamicScale(filtered);
   const baseScale=SCALE_FACTOR*dyn;
   const collisionExpand=computeCollisionExpand(filtered, baseScale*GEOM_SCALE);
-  lastBaseScale=baseScale;
-  lastCollisionExpand=collisionExpand;
+  lastBaseScale=baseScale; lastCollisionExpand=collisionExpand;
   const finalScale=baseScale*GEOM_SCALE*collisionExpand;
-
   pivot.scale.set(finalScale,finalScale,finalScale);
   camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*finalScale));
-
   const sprites=[];
   filtered.forEach((p,i)=>{
     const pos=position3D(p);
@@ -498,7 +481,6 @@ function rebuild(){
     sprite.userData.product=p;
     productGroup.add(sprite);
     sprites.push(sprite);
-
     const factionLabel=FACTION_LABEL[p.faction]??('F'+p.faction);
     const tr=document.createElement('tr');
     tr.innerHTML=`<td>${highlight(p.name,filter.nameQuery)}</td>
@@ -506,32 +488,25 @@ function rebuild(){
                   <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
     dataTableBody.appendChild(tr);
   });
-
-  separateClusters(sprites, finalScale);
-
+  separateClusters(sprites,finalScale);
   if(!filtered.length){
-    const tr=document.createElement('tr');
-    tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
+    const tr=document.createElement('tr'); tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
     dataTableBody.appendChild(tr);
   }
-
   dynScaleVal.textContent=dyn.toFixed(3);
-  const clampedFlag = collisionExpand >= 2.999 ? '*' : '';
+  const clampedFlag=collisionExpand>=2.999?'*':'';
   collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+clampedFlag;
   baseScaleVal.textContent=baseScale.toFixed(2);
   effectiveScaleVal.textContent=finalScale.toFixed(2);
   countBadge.textContent=`${filtered.length}/${disp}`;
-
   document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
     const key=th.getAttribute('data-sort-key');
     const baseText=th.getAttribute('data-base-text')||th.textContent.replace(/[▲▼]/,'').trim();
     if(!th.getAttribute('data-base-text')) th.setAttribute('data-base-text',baseText);
-    th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼') : baseText;
+    th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼'):baseText;
   });
-
   resizeRenderer();
 }
-
 function rebuildEmpty(){
   dynScaleVal.textContent='1.000';
   collisionScaleVal.textContent='col 1.000';
@@ -540,8 +515,6 @@ function rebuildEmpty(){
   countBadge.textContent='0/0';
   resizeRenderer();
 }
-
-/* データ */
 function isValidRecord(p){
   return p && typeof p.name==='string' && p.name.length>0 &&
     Number.isInteger(p.afkstage)&&p.afkstage>=1&&p.afkstage<=5 &&
@@ -564,8 +537,7 @@ function loadData(){
       loadStatus.classList.add('status-error');
     });
 }
-
-/* イベント: ソート */
+/* ソート */
 document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
   th.addEventListener('click',()=>{
     const key=th.getAttribute('data-sort-key');
@@ -573,65 +545,50 @@ document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
     rebuild();
   });
 });
-
-/* スライダー同期共通処理 */
+/* スライダー同期 */
 function bindRangePair(minEl,maxEl,minValEl,maxValEl){
   function update(){
-    // 表示
-    minValEl.textContent=minEl.value;
-    maxValEl.textContent=maxEl.value;
-    // 一貫性: Min <= Max
     if(+minEl.value>+maxEl.value){
-      // 操作された方を基準に調整
       if(lastChanged==='min') maxEl.value=minEl.value;
       else minEl.value=maxEl.value;
-      minValEl.textContent=minEl.value;
-      maxValEl.textContent=maxEl.value;
     }
+    minValEl.textContent=minEl.value;
+    maxValEl.textContent=maxEl.value;
     rebuild();
   }
   let lastChanged='min';
-  minEl.addEventListener('input',()=>{lastChanged='min'; update();});
-  maxEl.addEventListener('input',()=>{lastChanged='max'; update();});
-  // 初期表示
-  minValEl.textContent=minEl.value;
-  maxValEl.textContent=maxEl.value;
+  minEl.addEventListener('input',()=>{lastChanged='min';update();});
+  maxEl.addEventListener('input',()=>{lastChanged='max';update();});
+  update();
 }
 bindRangePair(afkMin,afkMax,afkMinVal,afkMaxVal);
 bindRangePair(pvpMin,pvpMax,pvpMinVal,pvpMaxVal);
 bindRangePair(drMin,drMax,drMinVal,drMaxVal);
-
 displayCountEl.addEventListener('input',rebuild);
 factionRadios.forEach(r=>r.addEventListener('change',rebuild));
 btnFilterReset.addEventListener('click',()=>{
   fName.value='';
-  afkMin.value=2; afkMax.value=5; afkMinVal.textContent='2'; afkMaxVal.textContent='5';
-  pvpMin.value=2; pvpMax.value=5; pvpMinVal.textContent='2'; pvpMaxVal.textContent='5';
-  drMin.value=2;  drMax.value=5;  drMinVal.textContent='2';  drMaxVal.textContent='5';
+  afkMin.value=2;afkMax.value=5;afkMinVal.textContent='2';afkMaxVal.textContent='5';
+  pvpMin.value=2;pvpMax.value=5;pvpMinVal.textContent='2';pvpMaxVal.textContent='5';
+  drMin.value=2;drMax.value=5;drMinVal.textContent='2';drMaxVal.textContent='5';
   document.querySelector('input[name="factionFilter"][value="all"]').checked=true;
-  sortState={key:null,dir:1};
-  GEOM_SCALE=INITIAL_GEOM_SCALE;
+  sortState={key:null,dir:1}; GEOM_SCALE=INITIAL_GEOM_SCALE;
   rebuild();
 });
 btnRebuild.addEventListener('click',rebuild);
-
-/* 名前検索 (デバウンス) */
 let nameDebTimer=null;
 fName.addEventListener('input',()=>{
   if(nameDebTimer) clearTimeout(nameDebTimer);
   nameDebTimer=setTimeout(()=>rebuild(),90);
 });
-
-/* 一覧表示切替 */
 function toggleList(){
-  let listExpanded = bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
+  let listExpanded=bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
   listExpanded=!listExpanded;
   bottomPanel.style.height=(listExpanded?EXPANDED_HEIGHT:COLLAPSED_HEIGHT)+'px';
   toggleListBtn.textContent=listExpanded?'一覧▼':'一覧▲';
   setTimeout(resizeRenderer,260);
 }
 toggleListBtn.addEventListener('click',toggleList);
-
 /* ホバー */
 const raycaster=new THREE.Raycaster(), mouse=new THREE.Vector2();
 addEventListener('mousemove',e=>{
@@ -652,14 +609,12 @@ addEventListener('mousemove',e=>{
     }
   } else tooltip.style.display='none';
 });
-
-/* キー回転 */
+/* 回転キー */
 addEventListener('keydown',e=>{
   if(!pivot) return;
   if(e.code==='KeyQ') pivot.rotation.z+=0.05;
   if(e.code==='KeyE') pivot.rotation.z-=0.05;
 });
-
 /* リサイズ */
 function resizeRenderer(){
   if(!renderer||!camera) return;
@@ -670,25 +625,17 @@ function resizeRenderer(){
   camera.updateProjectionMatrix();
 }
 addEventListener('resize',resizeRenderer);
-
 /* ループ */
 function animate(){
   requestAnimationFrame(animate);
   if(controls) controls.update();
   if(renderer && scene && camera){
-    if(productGroup){
-      productGroup.children.forEach(s=>s.quaternion.copy(camera.quaternion));
-    }
+    if(productGroup) productGroup.children.forEach(s=>s.quaternion.copy(camera.quaternion));
     renderer.render(scene,camera);
   }
 }
-
 /* 初期化 */
-function init(){
-  initThree();
-  rebuildEmpty();
-  loadData();
-}
+function init(){ initThree(); rebuildEmpty(); loadData(); }
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
