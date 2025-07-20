@@ -9,7 +9,7 @@
   --bg:#111;--border:#444;--accent:#ff44ff;--txt:#eee;--blur:4px;
   --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
 }
-html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--txt);font-family:var(--font);}
+html,body{margin:0;padding:0;height:100%;background:#111;color:#eee;font-family:var(--font);}
 body{display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
 #topBar{
   position:relative;z-index:20;
@@ -244,8 +244,10 @@ const SCALE_FACTOR=10, H=1.2;
 const MIN=1, MAX=5, SAFETY=1.05;
 const MIN_WEIGHT_BASE=SAFETY*SPRITE_SCALE/Math.sqrt(3);
 const MIN_DYN_SCALE=0.6, MAX_DYN_SCALE=2.2;
-const CLUSTER_EPS=1e-6;
 const SAFETY_MARGIN=1.05;
+const CLUSTER_PULL_FACTOR=0.12;
+const OUT_OF_BOUNDS_PULL=0.15;
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 let FACE_PLANES=null;
 let sortState={key:null,dir:1}, FULL_DATA=[];
 
@@ -273,19 +275,18 @@ const allRadio=document.querySelector('input[name="factionFilter"][value="all"]'
 
 /* ==== Three.js 変数 ==== */
 let scene, renderer, camera, controls, pivot, modelGroup, productGroup;
-let A,B,C,D,G;
+let A,B,C,D,G, BASE_CENTER;
 
 /* ==== 初期化 ==== */
 function initThree(){
   if(typeof THREE==='undefined'){console.error('THREE 未ロード');return;}
-  if(!THREE.OrbitControls){console.warn('OrbitControls 未定義 (パス/ネットワーク要確認)');}
   scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);
   threeContainer.appendChild(renderer.domElement);
   camera=new THREE.PerspectiveCamera(52,threeContainer.clientWidth/threeContainer.clientHeight,0.05,500);
-  controls=new (THREE.OrbitControls||THREE.OrbitControls)(camera,renderer.domElement);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;
   pivot=new THREE.Group(); scene.add(pivot);
   modelGroup=new THREE.Group(); pivot.add(modelGroup);
@@ -295,12 +296,11 @@ function initThree(){
   C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0);
   D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
   G=new THREE.Vector3().add(A).add(B).add(C).add(D).multiplyScalar(0.25);
+  BASE_CENTER=new THREE.Vector3().add(A).add(B).add(C).multiplyScalar(1/3);
   buildTetraWire(); modelGroup.position.sub(G); buildLabels();
   productGroup=new THREE.Group(); modelGroup.add(productGroup);
   camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*SCALE_FACTOR));
   controls.target.set(0,0,0); controls.update();
-  console.log('initThree 完了: tetra 构築, pivot=',pivot.children.length);
-  resizeRenderer();
   animate();
 }
 function buildTetraWire(){
@@ -374,15 +374,11 @@ function sumNorm(sum){return (sum-3*MIN)/(3*MAX-3*MIN);}
 function basePoint(p){
   let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
   let s=wa+wb+wc;
-  if(s===0){
-    return new THREE.Vector3(0,0,0);
-  }
+  if(s===0) return new THREE.Vector3(0,0,0);
   wa/=s; wb/=s; wc/=s;
   const floor=MIN_WEIGHT_BASE;
   if(wa<floor||wb<floor||wc<floor){
-    wa=Math.max(wa,floor);
-    wb=Math.max(wb,floor);
-    wc=Math.max(wc,floor);
+    wa=Math.max(wa,floor); wb=Math.max(wb,floor); wc=Math.max(wc,floor);
     const s2=wa+wb+wc; wa/=s2; wb/=s2; wc/=s2;
   }
   return new THREE.Vector3()
@@ -431,49 +427,66 @@ function computeCollisionExpand(arr, baseScale){
   return expand;
 }
 
-/* ==== クラスタ分離 ==== */
-function separateClusters(sprites, finalScale){
-  if(sprites.length<=1) return;
-  const clusters=new Map();
+/* ==== 重複用螺旋配置 ==== */
+function applyDuplicateSpiralLayout(sprites, finalScale){
+  if(!sprites.length) return;
+  const groups=new Map();
   for(const s of sprites){
-    const p=s.position;
-    const key=Math.round(p.x/CLUSTER_EPS)+'_'+Math.round(p.y/CLUSTER_EPS)+'_'+Math.round(p.z/CLUSTER_EPS);
-    if(!clusters.has(key)) clusters.set(key,[]);
-    clusters.get(key).push(s);
+    const p=s.userData.product;
+    const key=`${p.afkstage}_${p.PVP}_${p.DreamRealm}_${p.sum}`;
+    if(!groups.has(key)) groups.set(key,[]);
+    groups.get(key).push(s);
   }
   const worldSpriteRadius=SPRITE_SCALE*finalScale;
-  const PACK_SPACING=1.05;
-  clusters.forEach(list=>{
-    const n=list.length;
-    if(n<2) return;
-    const coords=[[0,0]];
-    if(n>1){
-      let placed=1, ring=1;
-      while(placed<n){
-        let q=0,r=-ring;
-        const dirs=[[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
-        for(let d=0; d<6 && placed<n; d++){
-          const [dq,dr]=dirs[d];
-          for(let step=0; step<ring && placed<n; step++){
-            coords.push([q,r]); placed++; q+=dq; r+=dr;
-          }
-        }
-        ring++; if(ring>30) break;
-      }
+  const SPIRAL_STEP=worldSpriteRadius*0.55;
+  const MAX_LOCAL_RADIUS=worldSpriteRadius*2.2;
+  groups.forEach(list=>{
+    if(list.length<2) return;
+    // 原点: 各スプライト本来位置の平均
+    let cx=0,cy=0,cz=0;
+    for(const s of list){cx+=s.position.x;cy+=s.position.y;cz+=s.position.z;}
+    cx/=list.length; cy/=list.length; cz/=list.length;
+    // 螺旋生成
+    const pts=[];
+    for(let i=0;i<list.length;i++){
+      const r=SPIRAL_STEP*Math.sqrt(i);
+      const theta=GOLDEN_ANGLE*i;
+      const x=r*Math.cos(theta);
+      const y=r*Math.sin(theta);
+      pts.push({x,y});
     }
-    const spacing=worldSpriteRadius*PACK_SPACING;
-    const pts=coords.slice(0,n).map(([q,r])=>{
-      const x=spacing*(1.5*q);
-      const y=spacing*(Math.sqrt(3)/2*(2*r+q));
-      return {x,y};
-    });
-    const cx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
-    const cy=pts.reduce((a,p)=>a+p.y,0)/pts.length;
-    for(let i=0;i<n;i++){
-      list[i].position.x+=pts[i].x-cx;
-      list[i].position.y+=pts[i].y-cy;
+    // 重心補正
+    const mx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
+    const my=pts.reduce((a,p)=>a+p.y,0)/pts.length;
+    // 適用 + 底面中心吸引 + 半径制限
+    const targetX=BASE_CENTER.x-G.x;
+    const targetY=BASE_CENTER.y-G.y;
+    for(let i=0;i<list.length;i++){
+      const s=list[i];
+      let x=cx+(pts[i].x-mx);
+      let y=cy+(pts[i].y-my);
+      // 吸引
+      x+= (targetX - x)*CLUSTER_PULL_FACTOR;
+      y+= (targetY - y)*CLUSTER_PULL_FACTOR;
+      // 半径制限（中心 cx,cy 基準）
+      let dx=x-cx, dy=y-cy;
+      const rad=Math.hypot(dx,dy);
+      if(rad>MAX_LOCAL_RADIUS){
+        const k=MAX_LOCAL_RADIUS/rad;
+        dx*=k; dy*=k;
+        x=cx+dx; y=cy+dy;
+      }
+      s.position.x=x;
+      s.position.y=y;
+      // z は保持（同一 sum なので共通）
     }
   });
+  // 外れ補正： tetra 内へ寄せる
+  for(const s of sprites){
+    const bp=basePoint(s.userData.product).clone().sub(G); // モデル原点系
+    s.position.x += (bp.x - s.position.x)*OUT_OF_BOUNDS_PULL;
+    s.position.y += (bp.y - s.position.y)*OUT_OF_BOUNDS_PULL;
+  }
 }
 
 /* ==== フィルタ ==== */
@@ -574,7 +587,7 @@ function rebuild(){
                     <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
       dataTableBody.appendChild(tr);
     });
-    separateClusters(sprites, finalScale);
+    applyDuplicateSpiralLayout(sprites, finalScale);
     clampSpritesInsideTetra(sprites);
     if(!filtered.length){
       const tr=document.createElement('tr');
@@ -613,21 +626,18 @@ function rebuildEmpty(){
 
 /* ==== データ ==== */
 function isValidRecord(p){
-  const ok= p && typeof p.name==='string' && p.name.length>0 &&
+  return p && typeof p.name==='string' && p.name.length>0 &&
     Number.isInteger(p.afkstage)&&p.afkstage>=1&&p.afkstage<=5 &&
     Number.isInteger(p.PVP)&&p.PVP>=1&&p.PVP<=5 &&
     Number.isInteger(p.DreamRealm)&&p.DreamRealm>=1&&p.DreamRealm<=5 &&
     Number.isInteger(p.faction)&&p.faction>=1&&p.faction<=7;
-  return !!ok;
 }
 function loadData(){
   loadStatus.textContent='Loading...';
   fetch('json/Heroes.json',{cache:'no-store'})
     .then(r=>{if(!r.ok) throw new Error('HTTP '+r.status); return r.json();})
     .then(arr=>{
-      const before=(Array.isArray(arr)?arr.length:0);
       FULL_DATA=Array.isArray(arr)?arr.filter(isValidRecord):[];
-      console.log('ロード件数',before,'→ 有効',FULL_DATA.length);
       loadStatus.textContent='Loaded '+FULL_DATA.length;
       rebuild();
     })
@@ -648,7 +658,6 @@ document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
 });
 displayCountEl.addEventListener('input',rebuild);
 displayCountEl.addEventListener('change',rebuild);
-
 [fAfkMin,fAfkMax,fPvpMin,fPvpMax,fDrMin,fDrMax].forEach(inp=>{
   const handler=()=>{
     const id=inp.id;
