@@ -21,7 +21,7 @@
     "name": "インドラ",
     "afkstage": 2,
     "PVP": 3,
-    "DreamRealm"cd: 5,
+    "DreamRealm": 5,
     "faction": 3,
     "image": "images/Hero_Indris_Ult.webp",
     "meta": { "role": "Burst" }
