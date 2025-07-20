@@ -11,54 +11,27 @@
 }
 html,body{margin:0;padding:0;height:100%;background:#111;color:#eee;font-family:var(--font);}
 body{display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
-#topBar{
-  position:relative;z-index:20;
-  flex:0 0 auto;background:rgba(0,0,0,.55);border-bottom:1px solid var(--border);
-  backdrop-filter:blur(var(--blur));padding:8px 14px 10px;display:flex;flex-direction:column;gap:8px;
-  font-size:12px;line-height:1.4;
-}
+#topBar{position:relative;z-index:20;flex:0 0 auto;background:rgba(0,0,0,.55);border-bottom:1px solid var(--border);backdrop-filter:blur(var(--blur));padding:8px 14px 10px;display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.4;}
 .section-title{font-weight:600;margin-right:8px;white-space:nowrap}
 .controls-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px}
 label.inline{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#ccc;min-width:78px}
 label.inline span.caption{font-weight:600;color:#ddd;display:flex;justify-content:space-between;align-items:center}
 label.inline span.caption .val{font-weight:400;color:#aaa;margin-left:4px;min-width:10px;text-align:right}
-.metric-badge{
-  display:inline-block;padding:2px 6px;border:1px solid #666;border-radius:4px;
-  background:#222;font-size:11px;min-width:52px;text-align:center
-}
+.metric-badge{display:inline-block;padding:2px 6px;border:1px solid #666;border-radius:4px;background:#222;font-size:11px;min-width:52px;text-align:center}
 input[type=range]{width:120px}
-input[type=text]{
-  background:#222;color:#eee;border:1px solid #555;border-radius:4px;
-  padding:4px 6px;font-size:11px;min-width:140px;
-}
-input[type=text]:focus{
-  outline:1px solid var(--accent);box-shadow:0 0 0 2px rgba(255,68,255,.35);
-}
-button{
-  background:#222;border:1px solid #666;color:#eee;font-size:11px;
-  padding:4px 10px;border-radius:4px;cursor:pointer
-}
+input[type=text]{background:#222;color:#eee;border:1px solid #555;border-radius:4px;padding:4px 6px;font-size:11px;min-width:140px;}
+input[type=text]:focus{outline:1px solid var(--accent);box-shadow:0 0 0 2px rgba(255,68,255,.35);}
+button{background:#222;border:1px solid #666;color:#eee;font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer}
 button:hover{background:#333}
 #viewerContainer{position:relative;flex:1 1 auto;min-height:320px;overflow:hidden;}
 #threeContainer{position:absolute;inset:0;z-index:0;}
-#tooltip{
-  position:fixed;pointer-events:none;padding:4px 7px;background:rgba(0,0,0,.75);
-  border:1px solid #ff66ff;border-radius:4px;font-size:11px;white-space:nowrap;color:#fff;
-  z-index:200;display:none
-}
-#bottomPanel{
-  flex:0 0 auto;background:rgba(0,0,0,.55);border-top:1px solid var(--border);
-  backdrop-filter:blur(var(--blur));display:flex;flex-direction:column;
-  transition:height .25s;overflow:hidden;
-}
+#tooltip{position:fixed;pointer-events:none;padding:4px 7px;background:rgba(0,0,0,.75);border:1px solid #ff66ff;border-radius:4px;font-size:11px;white-space:nowrap;color:#fff;z-index:200;display:none}
+#bottomPanel{flex:0 0 auto;background:rgba(0,0,0,.55);border-top:1px solid var(--border);backdrop-filter:blur(var(--blur));display:flex;flex-direction:column;transition:height .25s;overflow:hidden;}
 #bottomPanelHeader{display:flex;align-items:center;gap:12px;padding:4px 14px 2px;font-size:12px;}
 #toggleListBtn{margin-left:auto}
 #dataTableWrapper{flex:1 1 auto;overflow:auto;padding:0 14px 8px;}
 table{width:100%;border-collapse:collapse;font-size:11px;background:#181818;}
-table thead th{
-  position:sticky;top:0;background:#222;font-weight:600;
-  padding:6px 6px;border-bottom:1px solid #333;text-align:right;
-}
+table thead th{position:sticky;top:0;background:#222;font-weight:600;padding:6px 6px;border-bottom:1px solid #333;text-align:right;}
 table thead th:first-child,table tbody td:first-child{text-align:left}
 table thead th[data-sort-key]{cursor:pointer;}
 table thead th[data-sort-key]:hover{background:#2b2b2b;}
@@ -74,28 +47,13 @@ table tbody td{padding:4px 6px;border-bottom:1px solid #222;text-align:right;whi
 .status-error{color:#ff6b6b;font-weight:600;}
 mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
 #criteriaWrapper{flex:1 1 100%;width:100%;margin-top:4px;}
-#criteriaToggle{
-  background:#222;border:1px solid #555;color:#eee;font-size:11px;
-  padding:4px 10px;border-radius:4px;cursor:pointer;
-}
+#criteriaToggle{background:#222;border:1px solid #555;color:#eee;font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer;}
 #criteriaToggle:hover{background:#2d2d2d;}
-#criteriaPanel{
-  margin-top:6px;max-height:0;overflow:hidden;
-  transition:max-height .35s ease, padding .25s ease;
-  border:1px solid #333;border-radius:6px;
-  background:#181818;padding:0 0;
-}
-#criteriaScroll{
-  overflow-x:auto;
-  overflow-y:hidden;
-  max-width:100%;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:4px;
-}
+#criteriaPanel{margin-top:6px;max-height:0;overflow:hidden;transition:max-height .35s ease, padding .25s ease;border:1px solid #333;border-radius:6px;background:#181818;padding:0 0;}
+#criteriaScroll{overflow-x:auto;overflow-y:hidden;max-width:100%;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
 #criteriaScroll::-webkit-scrollbar{height:10px}
 #criteriaScroll::-webkit-scrollbar-track{background:#181818}
 #criteriaScroll::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
-
 #criteriaPanel.open{padding:6px 8px 10px;max-height:520px;}
 #criteriaTable{border-collapse:collapse;width:100%;font-size:10px;line-height:1.45;min-width:760px;}
 #criteriaTable th,#criteriaTable td{border:1px solid #333;padding:4px 6px;vertical-align:top;text-align:left;}
@@ -105,7 +63,6 @@ mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
 </style>
 </head>
 <body>
-
 <div id="topBar">
   <div class="controls-row" style="gap:16px">
     <span class="section-title">英雄 3DTier表</span>
@@ -116,34 +73,15 @@ mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
     <div class="metric-badge" id="countBadge">0/0</div>
     <span class="status-badge" id="loadStatus">Init...</span>
   </div>
-
   <div class="controls-row">
-    <label class="inline"><span class="caption">名前検索</span>
-      <input id="fName" type="text" placeholder="部分一致">
-    </label>
-    <label class="inline"><span class="caption">表示件数</span>
-      <input id="displayCount" type="range" min="10" max="200" step="10" value="100">
-    </label>
-
-    <label class="inline"><span class="caption">AFK最小 <span class="val" id="vAfkMin">2</span></span>
-      <input id="fAfkMin" type="range" min="1" max="5" step="1" value="2">
-    </label>
-    <label class="inline"><span class="caption">AFK最大 <span class="val" id="vAfkMax">5</span></span>
-      <input id="fAfkMax" type="range" min="1" max="5" step="1" value="5">
-    </label>
-    <label class="inline"><span class="caption">PVP最小 <span class="val" id="vPvpMin">2</span></span>
-      <input id="fPvpMin" type="range" min="1" max="5" step="1" value="2">
-    </label>
-    <label class="inline"><span class="caption">PVP最大 <span class="val" id="vPvpMax">5</span></span>
-      <input id="fPvpMax" type="range" min="1" max="5" step="1" value="5">
-    </label>
-    <label class="inline"><span class="caption">幻影最小 <span class="val" id="vDrMin">2</span></span>
-      <input id="fDrMin" type="range" min="1" max="5" step="1" value="2">
-    </label>
-    <label class="inline"><span class="caption">幻影最大 <span class="val" id="vDrMax">5</span></span>
-      <input id="fDrMax" type="range" min="1" max="5" step="1" value="5">
-    </label>
-
+    <label class="inline"><span class="caption">名前検索</span><input id="fName" type="text" placeholder="部分一致"></label>
+    <label class="inline"><span class="caption">表示件数</span><input id="displayCount" type="range" min="10" max="200" step="10" value="100"></label>
+    <label class="inline"><span class="caption">AFK最小 <span class="val" id="vAfkMin">2</span></span><input id="fAfkMin" type="range" min="1" max="5" step="1" value="2"></label>
+    <label class="inline"><span class="caption">AFK最大 <span class="val" id="vAfkMax">5</span></span><input id="fAfkMax" type="range" min="1" max="5" step="1" value="5"></label>
+    <label class="inline"><span class="caption">PVP最小 <span class="val" id="vPvpMin">2</span></span><input id="fPvpMin" type="range" min="1" max="5" step="1" value="2"></label>
+    <label class="inline"><span class="caption">PVP最大 <span class="val" id="vPvpMax">5</span></span><input id="fPvpMax" type="range" min="1" max="5" step="1" value="5"></label>
+    <label class="inline"><span class="caption">幻影最小 <span class="val" id="vDrMin">2</span></span><input id="fDrMin" type="range" min="1" max="5" step="1" value="2"></label>
+    <label class="inline"><span class="caption">幻影最大 <span class="val" id="vDrMax">5</span></span><input id="fDrMax" type="range" min="1" max="5" step="1" value="5"></label>
     <div class="faction-group" id="factionRadios">
       <span style="font-weight:600;">陣営:</span>
       <label><input type="radio" name="factionFilter" value="all" checked>All</label>
@@ -155,76 +93,32 @@ mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
       <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
       <label><input type="radio" name="factionFilter" value="7">ボイド</label>
     </div>
-
     <div id="criteriaWrapper">
       <button id="criteriaToggle" type="button">評価基準 表示 ▼</button>
       <div id="criteriaPanel">
         <div id="criteriaScroll">
           <table id="criteriaTable">
-            <thead>
-              <tr>
-                <th style="width:92px;"></th>
-                <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
-              </tr>
-            </thead>
+            <thead><tr><th style="width:92px;"></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
             <tbody>
-              <tr>
-                <th>幻影の域</th>
-                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に入っていない(0回)。</td>
-                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に1回入っている。</td>
-                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に2回入っている。</td>
-                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に3回入っている。</td>
-                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に4回以上入っている。</td>
-              </tr>
-              <tr>
-                <th>PVP</th>
-                <td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて入っていない(0回)。</td>
-                <td>直近5週で1回入っている。</td>
-                <td>直近5週で2回入っている。</td>
-                <td>直近5週で3回入っている。</td>
-                <td>直近5週で4回以上入っている。</td>
-              </tr>
-              <tr>
-                <th>AFKステージ</th>
-                <td>保有していなくともステージを進める上で問題にならない。</td>
-                <td>体感1割以上使用。</td>
-                <td>体感2割以上使用。</td>
-                <td>体感3割以上使用。</td>
-                <td>体感4割以上使用。</td>
-              </tr>
+              <tr><th>幻影の域</th><td>週メタ編成出現 0 回。</td><td>1 回。</td><td>2 回。</td><td>3 回。</td><td>4 回以上。</td></tr>
+              <tr><th>PVP</th><td>殿堂アリーナ防衛直近5週 0 回。</td><td>1 回。</td><td>2 回。</td><td>3 回。</td><td>4 回以上。</td></tr>
+              <tr><th>AFKステージ</th><td>未所持でも支障無し。</td><td>体感使用 ≥1割。</td><td>体感使用 ≥2割。</td><td>体感使用 ≥3割。</td><td>体感使用 ≥4割。</td></tr>
             </tbody>
           </table>
-        </div>
-        <div id="criteriaLegend"></div>
+        </div><div id="criteriaLegend"></div>
       </div>
     </div>
-
     <button id="btnFilterReset">フィルタReset</button>
     <button id="btnRebuild">再計算</button>
   </div>
 </div>
 
-<div id="viewerContainer">
-  <div id="threeContainer"></div>
-  <div id="tooltip"></div>
-</div>
-
+<div id="viewerContainer"><div id="threeContainer"></div><div id="tooltip"></div></div>
 <div id="bottomPanel">
-  <div id="bottomPanelHeader">
-    <strong>英雄一覧 (フィルタ後)</strong>
-    <button id="toggleListBtn">一覧▲</button>
-  </div>
+  <div id="bottomPanelHeader"><strong>英雄一覧 (フィルタ後)</strong><button id="toggleListBtn">一覧▲</button></div>
   <div id="dataTableWrapper">
     <table id="dataTable">
-      <thead>
-        <tr>
-          <th>名前</th><th>陣営</th>
-          <th data-sort-key="afkstage">AFK</th>
-          <th data-sort-key="PVP">PVP</th>
-          <th data-sort-key="DreamRealm">幻影</th>
-          <th data-sort-key="sum">合計</th>
-        </tr>
-      </thead>
+      <thead><tr><th>名前</th><th>陣営</th><th data-sort-key="afkstage">AFK</th><th data-sort-key="PVP">PVP</th><th data-sort-key="DreamRealm">幻影</th><th data-sort-key="sum">合計</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -245,9 +139,15 @@ const MIN=1, MAX=5, SAFETY=1.05;
 const MIN_WEIGHT_BASE=SAFETY*SPRITE_SCALE/Math.sqrt(3);
 const MIN_DYN_SCALE=0.6, MAX_DYN_SCALE=2.2;
 const SAFETY_MARGIN=1.05;
+const GOLDEN_ANGLE=Math.PI*(3-Math.sqrt(5));
+const SUM_MIN_REAL=3, SUM_MAX_REAL=15;
+const RAD_MARGIN_COEFF=1.15;
+const SUM15_EPS_T=0.995;
 const CLUSTER_PULL_FACTOR=0.12;
 const OUT_OF_BOUNDS_PULL=0.15;
-const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const TOP_SPRITE_ALIGN='bottom';
+
+/* ==== 状態 ==== */
 let FACE_PLANES=null;
 let sortState={key:null,dir:1}, FULL_DATA=[];
 
@@ -275,11 +175,10 @@ const allRadio=document.querySelector('input[name="factionFilter"][value="all"]'
 
 /* ==== Three.js 変数 ==== */
 let scene, renderer, camera, controls, pivot, modelGroup, productGroup;
-let A,B,C,D,G, BASE_CENTER;
+let A,B,C,D,G, BASE_CENTER, XY_CENTER;
 
 /* ==== 初期化 ==== */
 function initThree(){
-  if(typeof THREE==='undefined'){console.error('THREE 未ロード');return;}
   scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -288,21 +187,35 @@ function initThree(){
   camera=new THREE.PerspectiveCamera(52,threeContainer.clientWidth/threeContainer.clientHeight,0.05,500);
   controls=new THREE.OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;
+
   pivot=new THREE.Group(); scene.add(pivot);
   modelGroup=new THREE.Group(); pivot.add(modelGroup);
-  pivot.position.y=VIEW_OFFSET_Y;
-  A=new THREE.Vector3(0,0,0);
-  B=new THREE.Vector3(1,0,0);
-  C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0);
-  D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
+  pivot.position.y=VIEW_OFFSET_Y; // 四面体全体を下げて上部余白確保
+
+  A=new THREE.Vector3(-0.5,-Math.sqrt(3)/6,0);
+  B=new THREE.Vector3(0.5,-Math.sqrt(3)/6,0);
+  C=new THREE.Vector3(0,Math.sqrt(3)/3,0);
+  D=new THREE.Vector3(0,0,H);
   G=new THREE.Vector3().add(A).add(B).add(C).add(D).multiplyScalar(0.25);
-  BASE_CENTER=new THREE.Vector3().add(A).add(B).add(C).multiplyScalar(1/3);
-  buildTetraWire(); modelGroup.position.sub(G); buildLabels();
+  BASE_CENTER=new THREE.Vector3(0,0,0); // ★ centroid at origin
+  XY_CENTER=BASE_CENTER.clone(); // (0,0,0)
+
+
+  buildTetraWire();
+  buildLabels();
+
   productGroup=new THREE.Group(); modelGroup.add(productGroup);
+
+  /* 底面重心を原点へ (X,Y) */
+  // ★ centroid transform: shift not needed anymore
+
   camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*SCALE_FACTOR));
-  controls.target.set(0,0,0); controls.update();
+  /* ★ OrbitControls のターゲットを底面重心（ワールド座標 (0,VIEW_OFFSET_Y,0)）へ */
+  controls.target.set(0, VIEW_OFFSET_Y, 0);
+  controls.update();
   animate();
 }
+
 function buildTetraWire(){
   const gBase=new THREE.BufferGeometry().setFromPoints([A,B,C]); gBase.setIndex([0,1,2]);
   modelGroup.add(new THREE.Mesh(gBase,new THREE.MeshBasicMaterial({color:0xff00ff,side:THREE.DoubleSide,transparent:true,opacity:0.25})));
@@ -356,21 +269,30 @@ function clampSpritesInsideTetra(sprites){
   for(let iter=0; iter<3; iter++){
     let moved=false;
     for(const s of sprites){
-      const p=s.position;
+      if(s.userData && s.userData.isTopSum15) continue;
+      const worldPos=new THREE.Vector3(
+        s.position.x,
+        s.position.y,
+        s.position.z
+      ); // ★ centroid coords
       for(const {n,d} of planes){
-        const dist=n.dot(p)+d;
-        if(dist<targetDist){ p.addScaledVector(n,targetDist-dist); moved=true; }
+        const dist=n.dot(worldPos)+d;
+        if(dist<targetDist){
+          worldPos.addScaledVector(n,targetDist-dist);
+          moved=true;
+        }
+      }
+      if(moved){
+        s.position.x=worldPos.x; // ★ centroid coords
+        s.position.y=worldPos.y; // ★ centroid coords
       }
     }
     if(!moved) break;
   }
 }
 
-/* ==== 数学 ==== */
+/* ==== 位置計算 ==== */
 function norm(v){return (v-MIN)/(MAX-MIN);}
-function sumNorm(sum){return (sum-3*MIN)/(3*MAX-3*MIN);}
-
-/* ==== basePoint ==== */
 function basePoint(p){
   let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
   let s=wa+wb+wc;
@@ -381,19 +303,21 @@ function basePoint(p){
     wa=Math.max(wa,floor); wb=Math.max(wb,floor); wc=Math.max(wc,floor);
     const s2=wa+wb+wc; wa/=s2; wb/=s2; wc/=s2;
   }
-  return new THREE.Vector3()
-    .addScaledVector(A,wa)
-    .addScaledVector(B,wb)
-    .addScaledVector(C,wc);
+  return new THREE.Vector3().addScaledVector(A,wa).addScaledVector(B,wb).addScaledVector(C,wc);
+}
+function getSumZ(sum){
+  let t=(sum - SUM_MIN_REAL)/(SUM_MAX_REAL - SUM_MIN_REAL);
+  if(t<0) t=0; else if(t>1) t=1;
+  return t * H;
 }
 
-function position3D(p){return basePoint(p).lerp(D,sumNorm(p.sum));}
+/* ==== スケール ==== */
 function computeDynamicScale(arr){
   if(!arr.length) return 1;
   let rMax=0;
   for(const p of arr){
     const bp=basePoint(p);
-    const r=Math.hypot(bp.x-G.x,bp.y-G.y);
+    const r=Math.hypot(bp.x-XY_CENTER.x,bp.y-XY_CENTER.y);
     if(r>rMax) rMax=r;
   }
   if(rMax<=0) return 1;
@@ -427,7 +351,51 @@ function computeCollisionExpand(arr, baseScale){
   return expand;
 }
 
-/* ==== 重複用螺旋配置 ==== */
+/* ==== 合計値別配置 ==== */
+function applyRadialLayoutBySum(sprites, finalScale){
+  if(!sprites.length) return;
+  const groups=new Map();
+  for(const s of sprites){
+    const sum=s.userData.product.sum;
+    if(!groups.has(sum)) groups.set(sum,[]);
+    groups.get(sum).push(s);
+  }
+  const r_in_base=1/(2*Math.sqrt(3));
+  const spriteR=SPRITE_SCALE*finalScale;
+  groups.forEach((list,sum)=>{
+    let t=(sum - SUM_MIN_REAL)/(SUM_MAX_REAL - SUM_MIN_REAL);
+    if(t<0) t=0; else if(t>1) t=1;
+    const multiTop=(t===1 && list.length>1);
+    list.sort((a,b)=>a.userData.product.name.localeCompare(b.userData.product.name,'ja'));
+    const t_effective=multiTop?SUM15_EPS_T:t;
+    const r_in_level=r_in_base*(1 - t_effective);
+    const r=Math.max(0, r_in_level - spriteR*RAD_MARGIN_COEFF);
+    const z=getSumZ(sum);
+    if(list.length===1){
+      if(t===1){
+        placeTopSprite(list[0]);
+      }else{
+        list[0].position.set(0,0,z);
+      }
+      return;
+    }
+    const countOnCircle=multiTop?(list.length-1):list.length;
+    for(let i=0;i<list.length;i++){
+      const s=list[i];
+      if(multiTop && i===0){
+        placeTopSprite(s);
+        continue;
+      }
+      const idx=multiTop?(i-1):i;
+      const angle=2*Math.PI*idx/countOnCircle;
+      const x=r*Math.cos(angle);
+      const y=r*Math.sin(angle);
+      s.position.set(x,y,z);
+    }
+  });
+}
+
+/* ==== スパイラル ==== */
 function applyDuplicateSpiralLayout(sprites, finalScale){
   if(!sprites.length) return;
   const groups=new Map();
@@ -442,33 +410,24 @@ function applyDuplicateSpiralLayout(sprites, finalScale){
   const MAX_LOCAL_RADIUS=worldSpriteRadius*2.2;
   groups.forEach(list=>{
     if(list.length<2) return;
-    // 原点: 各スプライト本来位置の平均
-    let cx=0,cy=0,cz=0;
-    for(const s of list){cx+=s.position.x;cy+=s.position.y;cz+=s.position.z;}
-    cx/=list.length; cy/=list.length; cz/=list.length;
-    // 螺旋生成
+    const isSum15Group=list[0].userData.product.sum===15;
+    const startIndex=isSum15Group?1:0;
+    if(startIndex>=list.length) return;
+    let cx=0,cy=0;
+    list.forEach(s=>{cx+=s.position.x; cy+=s.position.y;});
+    cx/=list.length; cy/=list.length;
     const pts=[];
     for(let i=0;i<list.length;i++){
       const r=SPIRAL_STEP*Math.sqrt(i);
       const theta=GOLDEN_ANGLE*i;
-      const x=r*Math.cos(theta);
-      const y=r*Math.sin(theta);
-      pts.push({x,y});
+      pts.push({x:r*Math.cos(theta), y:r*Math.sin(theta)});
     }
-    // 重心補正
     const mx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
     const my=pts.reduce((a,p)=>a+p.y,0)/pts.length;
-    // 適用 + 底面中心吸引 + 半径制限
-    const targetX=BASE_CENTER.x-G.x;
-    const targetY=BASE_CENTER.y-G.y;
-    for(let i=0;i<list.length;i++){
+    for(let i=startIndex;i<list.length;i++){
       const s=list[i];
       let x=cx+(pts[i].x-mx);
       let y=cy+(pts[i].y-my);
-      // 吸引
-      x+= (targetX - x)*CLUSTER_PULL_FACTOR;
-      y+= (targetY - y)*CLUSTER_PULL_FACTOR;
-      // 半径制限（中心 cx,cy 基準）
       let dx=x-cx, dy=y-cy;
       const rad=Math.hypot(dx,dy);
       if(rad>MAX_LOCAL_RADIUS){
@@ -476,20 +435,40 @@ function applyDuplicateSpiralLayout(sprites, finalScale){
         dx*=k; dy*=k;
         x=cx+dx; y=cy+dy;
       }
+      x += (0 - x)*CLUSTER_PULL_FACTOR;
+      y += (0 - y)*CLUSTER_PULL_FACTOR;
       s.position.x=x;
       s.position.y=y;
-      // z は保持（同一 sum なので共通）
     }
   });
-  // 外れ補正： tetra 内へ寄せる
   for(const s of sprites){
-    const bp=basePoint(s.userData.product).clone().sub(G); // モデル原点系
-    s.position.x += (bp.x - s.position.x)*OUT_OF_BOUNDS_PULL;
-    s.position.y += (bp.y - s.position.y)*OUT_OF_BOUNDS_PULL;
+    if(s.userData && s.userData.isTopSum15) continue;
+    const bp=basePoint(s.userData.product);
+    s.position.x += (bp.x - s.position.x)*OUT_OF_BOUNDS_PULL; // ★ centroid coords
+    s.position.y += (bp.y - s.position.y)*OUT_OF_BOUNDS_PULL; // ★ centroid coords
   }
 }
 
-/* ==== フィルタ ==== */
+/* ==== 頂点配置 ==== */
+function placeTopSprite(sprite){
+  const vTop=new THREE.Vector3(D.x, D.y, H); // ★ already centered at centroid
+  sprite.position.copy(vTop);
+  sprite.userData.isTopSum15=true;
+  if(TOP_SPRITE_ALIGN==='bottom'){
+    sprite.center.set(0.5,0);
+  }else{
+    sprite.center.set(0.5,0.5);
+  }
+}
+function finalizeTopSpritePositions(){
+  if(!productGroup) return;
+  for(const s of productGroup.children){
+    if(!(s.userData && s.userData.isTopSum15)) continue;
+    placeTopSprite(s);
+  }
+}
+
+/* ==== フィルタ/補助 ==== */
 function normalizeName(s){
   if(!s) return '';
   return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
@@ -524,8 +503,6 @@ function highlight(text,q){
   if(i<0) return escapeHtml(text);
   return escapeHtml(text.slice(0,i))+'<mark>'+escapeHtml(text.slice(i,i+q.length))+'</mark>'+escapeHtml(text.slice(i+q.length));
 }
-
-/* ==== 値表示 ==== */
 function updateRangeDisplays(){
   const setVal=(id,input)=>{const el=document.getElementById(id); if(el) el.textContent=input.value;};
   setVal('vAfkMin',fAfkMin); setVal('vAfkMax',fAfkMax);
@@ -536,7 +513,6 @@ function updateRangeDisplays(){
 /* ==== 再構築 ==== */
 const palette=['#ff00ff','#ff33ff','#ff66ff','#ff00cc','#ff1493','#ff55aa','#ff99dd','#cc44ff','#ff22aa','#ffaaee'];
 let lastBaseScale=SCALE_FACTOR, lastCollisionExpand=1;
-
 function rebuild(){
   try{
     if(!productGroup) return;
@@ -558,9 +534,14 @@ function rebuild(){
     const finalScale=baseScale*GEOM_SCALE*collisionExpand;
     pivot.scale.set(finalScale,finalScale,finalScale);
     camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*finalScale));
+    /* ★ 再計算後もターゲット維持 */
+    controls.target.set(0, VIEW_OFFSET_Y, 0);
+    controls.update();
+
     const sprites=[];
     filtered.forEach((p,i)=>{
-      const pos=position3D(p);
+      const bp=basePoint(p);
+      const z=getSumZ(p.sum);
       let sprite;
       if(p.image){
         const loader=new THREE.TextureLoader();
@@ -575,11 +556,12 @@ function rebuild(){
         ctx.fillText(p.name.slice(-2),size/2,size/2);
         sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cvs),transparent:true}));
       }
-      sprite.position.copy(pos);
+      sprite.position.set(bp.x, bp.y, z); // ★ already centered at centroid
       sprite.scale.set(SPRITE_SCALE,SPRITE_SCALE,SPRITE_SCALE);
       sprite.userData.product=p;
       productGroup.add(sprite);
       sprites.push(sprite);
+
       const factionLabel=FACTION_LABEL[p.faction]??('F'+p.faction);
       const tr=document.createElement('tr');
       tr.innerHTML=`<td>${highlight(p.name,filter.nameQuery)}</td>
@@ -587,16 +569,19 @@ function rebuild(){
                     <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
       dataTableBody.appendChild(tr);
     });
+
+    applyRadialLayoutBySum(sprites, finalScale);
     applyDuplicateSpiralLayout(sprites, finalScale);
     clampSpritesInsideTetra(sprites);
+    finalizeTopSpritePositions();
+
     if(!filtered.length){
       const tr=document.createElement('tr');
       tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
       dataTableBody.appendChild(tr);
     }
     dynScaleVal.textContent=dyn.toFixed(3);
-    const clampedFlag = collisionExpand >= 2.999 ? '*' : '';
-    collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+clampedFlag;
+    collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+(collisionExpand>=2.999?'*':'');
     baseScaleVal.textContent=baseScale.toFixed(2);
     effectiveScaleVal.textContent=finalScale.toFixed(2);
     countBadge.textContent=`${filtered.length}/${disp}`;
@@ -668,8 +653,7 @@ displayCountEl.addEventListener('change',rebuild);
       const minEl=document.getElementById(id.replace('Max','Min'));
       if(+inp.value<+minEl.value) minEl.value=inp.value;
     }
-    updateRangeDisplays();
-    rebuild();
+    updateRangeDisplays(); rebuild();
   };
   inp.addEventListener('input',handler);
   inp.addEventListener('change',handler);
@@ -687,14 +671,12 @@ btnFilterReset.addEventListener('click',()=>{
   rebuild();
 });
 btnRebuild.addEventListener('click',rebuild);
-
 let nameDebTimer=null;
 fName.addEventListener('input',()=>{
   if(nameDebTimer) clearTimeout(nameDebTimer);
   if(fName.value.trim()!==''){ allRadio.checked=true; }
   nameDebTimer=setTimeout(()=>rebuild(),90);
 });
-
 function toggleList(){
   let listExpanded=bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
   listExpanded=!listExpanded;
@@ -703,8 +685,6 @@ function toggleList(){
   setTimeout(resizeRenderer,260);
 }
 toggleListBtn.addEventListener('click',toggleList);
-
-/* 評価基準パネル */
 (function(){
   const toggleBtn=document.getElementById('criteriaToggle');
   const panel=document.getElementById('criteriaPanel');
@@ -717,7 +697,7 @@ toggleListBtn.addEventListener('click',toggleList);
   }
 })();
 
-/* ホバー */
+/* ==== ホバー ==== */
 const raycaster=new THREE.Raycaster(), mouse=new THREE.Vector2();
 addEventListener('mousemove',e=>{
   if(!camera) return;
@@ -738,14 +718,14 @@ addEventListener('mousemove',e=>{
   } else tooltip.style.display='none';
 });
 
-/* キー回転 */
+/* ==== キー回転 ==== */
 addEventListener('keydown',e=>{
   if(!pivot) return;
   if(e.code==='KeyQ') pivot.rotation.z+=0.05;
   if(e.code==='KeyE') pivot.rotation.z-=0.05;
 });
 
-/* リサイズ */
+/* ==== リサイズ ==== */
 function resizeRenderer(){
   if(!renderer||!camera) return;
   const w=threeContainer.clientWidth,h=threeContainer.clientHeight;
@@ -756,7 +736,7 @@ function resizeRenderer(){
 }
 addEventListener('resize',resizeRenderer);
 
-/* ループ */
+/* ==== ループ ==== */
 function animate(){
   requestAnimationFrame(animate);
   if(controls) controls.update();
@@ -768,12 +748,8 @@ function animate(){
   }
 }
 
-/* 初期化 */
-function init(){
-  initThree();
-  rebuildEmpty();
-  loadData();
-}
+/* ==== 初期化 ==== */
+function init(){initThree();rebuildEmpty();loadData();}
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>

@@ -19,7 +19,7 @@
   },
   {
     "name": "ディアグレス",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 1,
@@ -37,7 +37,7 @@
   },
   {
     "name": "フーキン",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 1,
@@ -91,7 +91,7 @@
   },
   {
     "name": "ロワン",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 1,
@@ -172,7 +172,7 @@
   },
   {
     "name": "ブルータス",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -181,7 +181,7 @@
   },
   {
     "name": "ガルダ",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -190,7 +190,7 @@
   },
   {
     "name": "ココ",
-    "afkstage": 1,
+    "afkstage": 4,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -208,7 +208,7 @@
   },
   {
     "name": "マンカラ",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -217,7 +217,7 @@
   },
   {
     "name": "ルル",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -235,7 +235,7 @@
   },
   {
     "name": "アド",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -271,7 +271,7 @@
   },
   {
     "name": "アクン_モンモン",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -298,7 +298,7 @@
   },
   {
     "name": "ブライアン",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -316,7 +316,7 @@
   },
   {
     "name": "エルロン",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -325,7 +325,7 @@
   },
   {
     "name": "フェルガルド",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -343,7 +343,7 @@
   },
   {
     "name": "ダウナエ",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -388,7 +388,7 @@
   },
   {
     "name": "メイ",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -424,7 +424,7 @@
   },
   {
     "name": "タシー",
-    "afkstage": 1,
+    "afkstage": 4,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -433,7 +433,7 @@
   },
   {
     "name": "タドール",
-    "afkstage": 1,
+    "afkstage": 4,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -442,7 +442,7 @@
   },
   {
     "name": "アルマス",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -451,7 +451,7 @@
   },
   {
     "name": "エイン",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 3,
@@ -460,7 +460,7 @@
   },
   {
     "name": "ボニー",
-    "afkstage": 1,
+    "afkstage": 4,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 4,
@@ -496,7 +496,7 @@
   },
   {
     "name": "ダイモン",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 4,
@@ -541,7 +541,7 @@
   },
   {
     "name": "ニル",
-    "afkstage": 1,
+    "afkstage": 4,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 4,
@@ -559,7 +559,7 @@
   },
   {
     "name": "シェミーラ",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 4,
@@ -613,7 +613,7 @@
   },
   {
     "name": "バハラム",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 5,
@@ -640,7 +640,7 @@
   },
   {
     "name": "エリア_ライラ",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 5,
@@ -658,7 +658,7 @@
   },
   {
     "name": "タレン",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 5,
@@ -694,7 +694,7 @@
   },
   {
     "name": "クルル",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 6,
@@ -712,7 +712,7 @@
   },
   {
     "name": "エニエ",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 6,
@@ -721,7 +721,7 @@
   },
   {
     "name": "ナツ",
-    "afkstage": 1,
+    "afkstage": 3,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 7,
@@ -730,11 +730,20 @@
   },
   {
     "name": "ルーシー",
-    "afkstage": 1,
+    "afkstage": 5,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 7,
     "image": "images/Lucy.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "最強さん",
+    "afkstage": 5,
+    "PVP": 5,
+    "DreamRealm": 5,
+    "faction": 7,
+    "image": "images/Atalanta.PNG",
     "meta": { "role": "TEST" }
   }
 ]
