@@ -67,7 +67,7 @@ table tbody td{padding:4px 6px;border-bottom:1px solid #222;text-align:right;whi
 #dataTableWrapper::-webkit-scrollbar{width:10px}
 #dataTableWrapper::-webkit-scrollbar-track{background:#181818}
 #dataTableWrapper::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
-.faction-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:11px;line-height:1.2;max-width:560px}
+.faction-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:11px;line-height:1.2;max-width:640px}
 .faction-group label{display:flex;align-items:center;gap:2px;cursor:pointer}
 .faction-group input[type=radio]{accent-color:#ff44ff;cursor:pointer}
 .status-badge{margin-left:8px;font-size:11px;color:#aaa;}
@@ -85,7 +85,6 @@ mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
   border:1px solid #333;border-radius:6px;
   background:#181818;padding:0 0;
 }
-/* 追加: 横スクロール用ラッパ */
 #criteriaScroll{
   overflow-x:auto;
   overflow-y:hidden;
@@ -93,13 +92,12 @@ mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
   -webkit-overflow-scrolling:touch;
   padding-bottom:4px;
 }
-/* 任意の横スクロールバー装飾 */
 #criteriaScroll::-webkit-scrollbar{height:10px}
 #criteriaScroll::-webkit-scrollbar-track{background:#181818}
 #criteriaScroll::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
 
 #criteriaPanel.open{padding:6px 8px 10px;max-height:520px;}
-#criteriaTable{border-collapse:collapse;width:100%;font-size:10px;line-height:1.45;min-width:760px;} /* min-width 追加 */
+#criteriaTable{border-collapse:collapse;width:100%;font-size:10px;line-height:1.45;min-width:760px;}
 #criteriaTable th,#criteriaTable td{border:1px solid #333;padding:4px 6px;vertical-align:top;text-align:left;}
 #criteriaTable thead th{background:#202020;font-weight:600;}
 #criteriaTable tbody th{background:#252525;white-space:nowrap;}
@@ -155,6 +153,7 @@ mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
       <label><input type="radio" name="factionFilter" value="4">グレイヴボーン</label>
       <label><input type="radio" name="factionFilter" value="5">セレスチアル</label>
       <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
+      <label><input type="radio" name="factionFilter" value="7">ボイド</label>
     </div>
 
     <div id="criteriaWrapper">
@@ -239,7 +238,7 @@ const INITIAL_GEOM_SCALE=1.25; let GEOM_SCALE=INITIAL_GEOM_SCALE;
 const IMG_W=180, IMG_H=200, REF_IMG_H=256;
 const SPRITE_SCALE=0.30*(IMG_H/REF_IMG_H);
 const SPACING_FACTOR=1.15, COLLISION_SAFETY=1.02;
-const FACTION_LABEL={1:'ブライト',2:'ババリア',3:'ヴェルディア',4:'グレイヴボーン',5:'セレスチアル',6:'カタストロフ'};
+const FACTION_LABEL={1:'ブライト',2:'ババリア',3:'ヴェルディア',4:'グレイヴボーン',5:'セレスチアル',6:'カタストロフ',7:'ボイド'};
 const COLLAPSED_HEIGHT=110, EXPANDED_HEIGHT=240, VIEW_OFFSET_Y=-0.9;
 const SCALE_FACTOR=10, H=1.2;
 const MIN=1, MAX=5, SAFETY=1.05;
@@ -278,13 +277,15 @@ let A,B,C,D,G;
 
 /* ==== 初期化 ==== */
 function initThree(){
+  if(typeof THREE==='undefined'){console.error('THREE 未ロード');return;}
+  if(!THREE.OrbitControls){console.warn('OrbitControls 未定義 (パス/ネットワーク要確認)');}
   scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);
   threeContainer.appendChild(renderer.domElement);
   camera=new THREE.PerspectiveCamera(52,threeContainer.clientWidth/threeContainer.clientHeight,0.05,500);
-  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls=new (THREE.OrbitControls||THREE.OrbitControls)(camera,renderer.domElement);
   controls.enableDamping=true;
   pivot=new THREE.Group(); scene.add(pivot);
   modelGroup=new THREE.Group(); pivot.add(modelGroup);
@@ -298,6 +299,8 @@ function initThree(){
   productGroup=new THREE.Group(); modelGroup.add(productGroup);
   camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*SCALE_FACTOR));
   controls.target.set(0,0,0); controls.update();
+  console.log('initThree 完了: tetra 构築, pivot=',pivot.children.length);
+  resizeRenderer();
   animate();
 }
 function buildTetraWire(){
@@ -367,7 +370,7 @@ function clampSpritesInsideTetra(sprites){
 function norm(v){return (v-MIN)/(MAX-MIN);}
 function sumNorm(sum){return (sum-3*MIN)/(3*MAX-3*MIN);}
 
-/* ==== basePoint 改修版 ==== */
+/* ==== basePoint ==== */
 function basePoint(p){
   let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
   let s=wa+wb+wc;
@@ -428,7 +431,7 @@ function computeCollisionExpand(arr, baseScale){
   return expand;
 }
 
-/* ==== クラスタ分離（六角格子） ==== */
+/* ==== クラスタ分離 ==== */
 function separateClusters(sprites, finalScale){
   if(sprites.length<=1) return;
   const clusters=new Map();
@@ -522,74 +525,81 @@ const palette=['#ff00ff','#ff33ff','#ff66ff','#ff00cc','#ff1493','#ff55aa','#ff9
 let lastBaseScale=SCALE_FACTOR, lastCollisionExpand=1;
 
 function rebuild(){
-  if(!productGroup) return;
-  while(productGroup.children.length) productGroup.remove(productGroup.children[0]);
-  dataTableBody.innerHTML='';
-  const disp=+displayCountEl.value;
-  const subset=FULL_DATA.slice(0,disp);
-  const filter=getFilter();
-  const filtered=subset.filter(p=>passFilter(p,filter));
-  filtered.forEach(p=>p.sum=p.afkstage+p.PVP+p.DreamRealm);
-  if(sortState.key){
-    const k=sortState.key, d=sortState.dir;
-    filtered.sort((a,b)=>(a[k]-b[k])*d);
-  }
-  const dyn=computeDynamicScale(filtered);
-  const baseScale=SCALE_FACTOR*dyn;
-  const collisionExpand=computeCollisionExpand(filtered, baseScale*GEOM_SCALE);
-  lastBaseScale=baseScale; lastCollisionExpand=collisionExpand;
-  const finalScale=baseScale*GEOM_SCALE*collisionExpand;
-  pivot.scale.set(finalScale,finalScale,finalScale);
-  camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*finalScale));
-  const sprites=[];
-  filtered.forEach((p,i)=>{
-    const pos=position3D(p);
-    let sprite;
-    if(p.image){
-      const tex=new THREE.TextureLoader().load(p.image);
-      sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
-    }else{
-      const size=256,cvs=document.createElement('canvas');cvs.width=cvs.height=size;
-      const ctx=cvs.getContext('2d');
-      ctx.beginPath(); ctx.fillStyle=palette[i%palette.length];
-      ctx.arc(size/2,size/2,size*0.40,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#fff'; ctx.font='bold 80px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(p.name.slice(-2),size/2,size/2);
-      sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cvs),transparent:true}));
+  try{
+    if(!productGroup) return;
+    while(productGroup.children.length) productGroup.remove(productGroup.children[0]);
+    dataTableBody.innerHTML='';
+    const disp=+displayCountEl.value;
+    const subset=FULL_DATA.slice(0,disp);
+    const filter=getFilter();
+    const filtered=subset.filter(p=>passFilter(p,filter));
+    filtered.forEach(p=>p.sum=p.afkstage+p.PVP+p.DreamRealm);
+    if(sortState.key){
+      const k=sortState.key, d=sortState.dir;
+      filtered.sort((a,b)=>(a[k]-b[k])*d);
     }
-    sprite.position.copy(pos);
-    sprite.scale.set(SPRITE_SCALE,SPRITE_SCALE,SPRITE_SCALE);
-    sprite.userData.product=p;
-    productGroup.add(sprite);
-    sprites.push(sprite);
-    const factionLabel=FACTION_LABEL[p.faction]??('F'+p.faction);
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${highlight(p.name,filter.nameQuery)}</td>
-                  <td>${escapeHtml(factionLabel)}</td>
-                  <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
-    dataTableBody.appendChild(tr);
-  });
-  separateClusters(sprites, finalScale);
-  clampSpritesInsideTetra(sprites);
-  if(!filtered.length){
-    const tr=document.createElement('tr');
-    tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
-    dataTableBody.appendChild(tr);
+    const dyn=computeDynamicScale(filtered);
+    const baseScale=SCALE_FACTOR*dyn;
+    const collisionExpand=computeCollisionExpand(filtered, baseScale*GEOM_SCALE);
+    lastBaseScale=baseScale; lastCollisionExpand=collisionExpand;
+    const finalScale=baseScale*GEOM_SCALE*collisionExpand;
+    pivot.scale.set(finalScale,finalScale,finalScale);
+    camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*finalScale));
+    const sprites=[];
+    filtered.forEach((p,i)=>{
+      const pos=position3D(p);
+      let sprite;
+      if(p.image){
+        const loader=new THREE.TextureLoader();
+        const tex=loader.load(p.image,undefined,undefined,()=>console.warn('画像ロード失敗',p.image));
+        sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
+      }else{
+        const size=256,cvs=document.createElement('canvas');cvs.width=cvs.height=size;
+        const ctx=cvs.getContext('2d');
+        ctx.beginPath(); ctx.fillStyle=palette[i%palette.length];
+        ctx.arc(size/2,size/2,size*0.40,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#fff'; ctx.font='bold 80px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(p.name.slice(-2),size/2,size/2);
+        sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cvs),transparent:true}));
+      }
+      sprite.position.copy(pos);
+      sprite.scale.set(SPRITE_SCALE,SPRITE_SCALE,SPRITE_SCALE);
+      sprite.userData.product=p;
+      productGroup.add(sprite);
+      sprites.push(sprite);
+      const factionLabel=FACTION_LABEL[p.faction]??('F'+p.faction);
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${highlight(p.name,filter.nameQuery)}</td>
+                    <td>${escapeHtml(factionLabel)}</td>
+                    <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
+      dataTableBody.appendChild(tr);
+    });
+    separateClusters(sprites, finalScale);
+    clampSpritesInsideTetra(sprites);
+    if(!filtered.length){
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
+      dataTableBody.appendChild(tr);
+    }
+    dynScaleVal.textContent=dyn.toFixed(3);
+    const clampedFlag = collisionExpand >= 2.999 ? '*' : '';
+    collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+clampedFlag;
+    baseScaleVal.textContent=baseScale.toFixed(2);
+    effectiveScaleVal.textContent=finalScale.toFixed(2);
+    countBadge.textContent=`${filtered.length}/${disp}`;
+    document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
+      const key=th.getAttribute('data-sort-key');
+      const baseText=th.getAttribute('data-base-text')||th.textContent.replace(/[▲▼]/,'').trim();
+      if(!th.getAttribute('data-base-text')) th.setAttribute('data-base-text',baseText);
+      th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼') : baseText;
+    });
+    updateRangeDisplays();
+    resizeRenderer();
+  }catch(e){
+    console.error('rebuild エラー',e);
+    loadStatus.textContent='Error(rebuild)';
+    loadStatus.classList.add('status-error');
   }
-  dynScaleVal.textContent=dyn.toFixed(3);
-  const clampedFlag = collisionExpand >= 2.999 ? '*' : '';
-  collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+clampedFlag;
-  baseScaleVal.textContent=baseScale.toFixed(2);
-  effectiveScaleVal.textContent=finalScale.toFixed(2);
-  countBadge.textContent=`${filtered.length}/${disp}`;
-  document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
-    const key=th.getAttribute('data-sort-key');
-    const baseText=th.getAttribute('data-base-text')||th.textContent.replace(/[▲▼]/,'').trim();
-    if(!th.getAttribute('data-base-text')) th.setAttribute('data-base-text',baseText);
-    th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼') : baseText;
-  });
-  updateRangeDisplays();
-  resizeRenderer();
 }
 function rebuildEmpty(){
   dynScaleVal.textContent='1.000';
@@ -603,18 +613,21 @@ function rebuildEmpty(){
 
 /* ==== データ ==== */
 function isValidRecord(p){
-  return p && typeof p.name==='string' && p.name.length>0 &&
+  const ok= p && typeof p.name==='string' && p.name.length>0 &&
     Number.isInteger(p.afkstage)&&p.afkstage>=1&&p.afkstage<=5 &&
     Number.isInteger(p.PVP)&&p.PVP>=1&&p.PVP<=5 &&
     Number.isInteger(p.DreamRealm)&&p.DreamRealm>=1&&p.DreamRealm<=5 &&
-    Number.isInteger(p.faction)&&p.faction>=1&&p.faction<=6;
+    Number.isInteger(p.faction)&&p.faction>=1&&p.faction<=7;
+  return !!ok;
 }
 function loadData(){
   loadStatus.textContent='Loading...';
   fetch('json/Heroes.json',{cache:'no-store'})
     .then(r=>{if(!r.ok) throw new Error('HTTP '+r.status); return r.json();})
     .then(arr=>{
+      const before=(Array.isArray(arr)?arr.length:0);
       FULL_DATA=Array.isArray(arr)?arr.filter(isValidRecord):[];
+      console.log('ロード件数',before,'→ 有効',FULL_DATA.length);
       loadStatus.textContent='Loaded '+FULL_DATA.length;
       rebuild();
     })
@@ -634,8 +647,10 @@ document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
   });
 });
 displayCountEl.addEventListener('input',rebuild);
+displayCountEl.addEventListener('change',rebuild);
+
 [fAfkMin,fAfkMax,fPvpMin,fPvpMax,fDrMin,fDrMax].forEach(inp=>{
-  inp.addEventListener('input',()=>{
+  const handler=()=>{
     const id=inp.id;
     if(id.endsWith('Min')){
       const maxEl=document.getElementById(id.replace('Min','Max'));
@@ -646,7 +661,9 @@ displayCountEl.addEventListener('input',rebuild);
     }
     updateRangeDisplays();
     rebuild();
-  });
+  };
+  inp.addEventListener('input',handler);
+  inp.addEventListener('change',handler);
 });
 factionRadios.forEach(r=>r.addEventListener('change',rebuild));
 btnFilterReset.addEventListener('click',()=>{
