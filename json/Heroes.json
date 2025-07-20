@@ -39,7 +39,7 @@
     "name": "フーキン",
     "afkstage": 5,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 2,
     "faction": 1,
     "image": "images/Hugin.PNG",
     "meta": { "role": "TEST" }
@@ -92,7 +92,7 @@
   {
     "name": "ロワン",
     "afkstage": 3,
-    "PVP": 1,
+    "PVP": 3,
     "DreamRealm": 1,
     "faction": 1,
     "image": "images/Rowan.PNG",
@@ -111,7 +111,7 @@
     "name": "ソニア",
     "afkstage": 1,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 2,
     "faction": 1,
     "image": "images/Sonja.PNG",
     "meta": { "role": "TEST" }
@@ -191,7 +191,7 @@
   {
     "name": "ココ",
     "afkstage": 4,
-    "PVP": 1,
+    "PVP": 3,
     "DreamRealm": 1,
     "faction": 2,
     "image": "images/Koko.PNG",
@@ -201,7 +201,7 @@
     "name": "クルーガー",
     "afkstage": 1,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 3,
     "faction": 2,
     "image": "images/Kruger.PNG",
     "meta": { "role": "TEST" }
@@ -209,7 +209,7 @@
   {
     "name": "マンカラ",
     "afkstage": 2,
-    "PVP": 1,
+    "PVP": 3,
     "DreamRealm": 1,
     "faction": 2,
     "image": "images/Mikola.PNG",
@@ -245,7 +245,7 @@
   {
     "name": "サテラ",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 2,
     "image": "images/Satrana.PNG",
@@ -263,8 +263,8 @@
   {
     "name": "シャキール",
     "afkstage": 1,
-    "PVP": 1,
-    "DreamRealm": 1,
+    "PVP": 3,
+    "DreamRealm": 2,
     "faction": 2,
     "image": "images/Shakir.PNG",
     "meta": { "role": "TEST" }
@@ -273,7 +273,7 @@
     "name": "アクン_モンモン",
     "afkstage": 3,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 2,
     "faction": 2,
     "image": "images/Smokey_Meerky.PNG",
     "meta": { "role": "TEST" }
@@ -308,7 +308,7 @@
   {
     "name": "ダミアン",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Damian.PNG",
@@ -317,7 +317,7 @@
   {
     "name": "エルロン",
     "afkstage": 5,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Eironn.PNG",
@@ -389,7 +389,7 @@
   {
     "name": "メイ",
     "afkstage": 3,
-    "PVP": 1,
+    "PVP": 4,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/LilyMay.PNG",
@@ -407,7 +407,7 @@
   {
     "name": "ライカ",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Lyca.PNG",
@@ -425,7 +425,7 @@
   {
     "name": "タシー",
     "afkstage": 4,
-    "PVP": 1,
+    "PVP": 4,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Tasi.PNG",
@@ -434,7 +434,7 @@
   {
     "name": "タドール",
     "afkstage": 4,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Thador.PNG",
@@ -443,7 +443,7 @@
   {
     "name": "アルマス",
     "afkstage": 5,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Ulmus.PNG",
@@ -453,7 +453,7 @@
     "name": "エイン",
     "afkstage": 5,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 5,
     "faction": 3,
     "image": "images/Velara.PNG",
     "meta": { "role": "TEST" }
@@ -461,7 +461,7 @@
   {
     "name": "ボニー",
     "afkstage": 4,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 4,
     "image": "images/Bonnie.PNG",
@@ -497,8 +497,8 @@
   {
     "name": "ダイモン",
     "afkstage": 3,
-    "PVP": 1,
-    "DreamRealm": 1,
+    "PVP": 5,
+    "DreamRealm": 2,
     "faction": 4,
     "image": "images/Daimon.PNG",
     "meta": { "role": "TEST" }
@@ -515,7 +515,7 @@
   {
     "name": "イゴール",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 4,
     "image": "images/Igor.PNG",
@@ -524,7 +524,7 @@
   {
     "name": "リュボミル",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 4,
     "image": "images/Ludovic.PNG",
@@ -542,7 +542,7 @@
   {
     "name": "ニル",
     "afkstage": 4,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 4,
     "image": "images/Niru.PNG",
@@ -560,8 +560,8 @@
   {
     "name": "シェミーラ",
     "afkstage": 5,
-    "PVP": 1,
-    "DreamRealm": 1,
+    "PVP": 5,
+    "DreamRealm": 5,
     "faction": 4,
     "image": "images/Shemira.PNG",
     "meta": { "role": "TEST" }
@@ -578,7 +578,7 @@
   {
     "name": "トーラン",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 4,
     "image": "images/Thoran.PNG",
@@ -605,7 +605,7 @@
   {
     "name": "アタリア",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 5,
     "DreamRealm": 1,
     "faction": 5,
     "image": "images/Athalia.PNG",
@@ -615,7 +615,7 @@
     "name": "バハラム",
     "afkstage": 5,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 4,
     "faction": 5,
     "image": "images/Baelran.PNG",
     "meta": { "role": "TEST" }
@@ -623,7 +623,7 @@
   {
     "name": "サジタリス",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 5,
     "image": "images/Dionel.PNG",
@@ -641,8 +641,8 @@
   {
     "name": "エリア_ライラ",
     "afkstage": 5,
-    "PVP": 1,
-    "DreamRealm": 1,
+    "PVP": 3,
+    "DreamRealm": 5,
     "faction": 5,
     "image": "images/Elijah_Lailah.PNG",
     "meta": { "role": "TEST" }
@@ -650,7 +650,7 @@
   {
     "name": "スケッギョルド",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 5,
     "image": "images/Scarlita.PNG",
@@ -659,7 +659,7 @@
   {
     "name": "タレン",
     "afkstage": 2,
-    "PVP": 1,
+    "PVP": 2,
     "DreamRealm": 1,
     "faction": 5,
     "image": "images/Talene.PNG",
@@ -677,7 +677,7 @@
   {
     "name": "ティスニア",
     "afkstage": 1,
-    "PVP": 1,
+    "PVP": 3,
     "DreamRealm": 1,
     "faction": 6,
     "image": "images/Cryonaia.PNG",
@@ -687,7 +687,7 @@
     "name": "ハラック",
     "afkstage": 1,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 3,
     "faction": 6,
     "image": "images/Harak.PNG",
     "meta": { "role": "TEST" }
@@ -695,7 +695,7 @@
   {
     "name": "クルル",
     "afkstage": 3,
-    "PVP": 1,
+    "PVP": 3,
     "DreamRealm": 1,
     "faction": 6,
     "image": "images/Kulu.PNG",
@@ -704,8 +704,8 @@
   {
     "name": "プルースト",
     "afkstage": 1,
-    "PVP": 1,
-    "DreamRealm": 1,
+    "PVP": 4,
+    "DreamRealm": 5,
     "faction": 6,
     "image": "images/Phraesto.PNG",
     "meta": { "role": "TEST" }
@@ -714,7 +714,7 @@
     "name": "エニエ",
     "afkstage": 2,
     "PVP": 1,
-    "DreamRealm": 1,
+    "DreamRealm": 4,
     "faction": 6,
     "image": "images/Reinier.PNG",
     "meta": { "role": "TEST" }
@@ -735,15 +735,6 @@
     "DreamRealm": 1,
     "faction": 7,
     "image": "images/Lucy.PNG",
-    "meta": { "role": "TEST" }
-  },
-  {
-    "name": "最強さん",
-    "afkstage": 5,
-    "PVP": 5,
-    "DreamRealm": 5,
-    "faction": 7,
-    "image": "images/Atalanta.PNG",
     "meta": { "role": "TEST" }
   }
 ]
