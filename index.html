@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>AFKJ Tier表-3D (陣営2段レイアウト)</title>
+<title>AFKJ Tier表-3D</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 :root{
@@ -18,33 +18,22 @@ body{display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
   font-size:12px;line-height:1.4;
 }
 .section-title{font-weight:600;margin-right:8px;white-space:nowrap}
-.controls-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
-.group-block{
-  display:flex;flex-direction:column;gap:4px;padding:4px 6px;
-  border:1px solid #333;border-radius:6px;background:#1b1b1b;
-  min-width:140px;
-}
-.group-block h4{
-  margin:0;font-size:11px;font-weight:600;letter-spacing:.5px;color:#ddd;
-}
-.range-row{display:flex;align-items:center;gap:6px}
-.range-row input[type=range]{width:90px}
-.range-val{
-  min-width:24px;font-size:11px;padding:1px 4px;
-  background:#222;border:1px solid #555;border-radius:4px;
-  text-align:center;
-}
-label.inline{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#ccc}
-label.inline span.caption{font-weight:600;color:#ddd}
+.controls-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px}
+label.inline{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#ccc;min-width:78px}
+label.inline span.caption{font-weight:600;color:#ddd;display:flex;justify-content:space-between;align-items:center}
+label.inline span.caption .val{font-weight:400;color:#aaa;margin-left:4px;min-width:10px;text-align:right}
 .metric-badge{
   display:inline-block;padding:2px 6px;border:1px solid #666;border-radius:4px;
   background:#222;font-size:11px;min-width:52px;text-align:center
 }
+input[type=range]{width:120px}
 input[type=text]{
   background:#222;color:#eee;border:1px solid #555;border-radius:4px;
   padding:4px 6px;font-size:11px;min-width:140px;
 }
-input[type=text]:focus{outline:1px solid var(--accent);box-shadow:0 0 0 2px rgba(255,68,255,.35)}
+input[type=text]:focus{
+  outline:1px solid var(--accent);box-shadow:0 0 0 2px rgba(255,68,255,.35);
+}
 button{
   background:#222;border:1px solid #666;color:#eee;font-size:11px;
   padding:4px 10px;border-radius:4px;cursor:pointer
@@ -78,38 +67,43 @@ table tbody td{padding:4px 6px;border-bottom:1px solid #222;text-align:right;whi
 #dataTableWrapper::-webkit-scrollbar{width:10px}
 #dataTableWrapper::-webkit-scrollbar-track{background:#181818}
 #dataTableWrapper::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
+.faction-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:11px;line-height:1.2;max-width:560px}
+.faction-group label{display:flex;align-items:center;gap:2px;cursor:pointer}
+.faction-group input[type=radio]{accent-color:#ff44ff;cursor:pointer}
 .status-badge{margin-left:8px;font-size:11px;color:#aaa;}
 .status-error{color:#ff6b6b;font-weight:600;}
-mark{
-  background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;
+mark{background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;}
+#criteriaWrapper{flex:1 1 100%;width:100%;margin-top:4px;}
+#criteriaToggle{
+  background:#222;border:1px solid #555;color:#eee;font-size:11px;
+  padding:4px 10px;border-radius:4px;cursor:pointer;
 }
-.note-small{font-size:10px;color:#aaa;margin-left:4px}
+#criteriaToggle:hover{background:#2d2d2d;}
+#criteriaPanel{
+  margin-top:6px;max-height:0;overflow:hidden;
+  transition:max-height .35s ease, padding .25s ease;
+  border:1px solid #333;border-radius:6px;
+  background:#181818;padding:0 0;
+}
+/* 追加: 横スクロール用ラッパ */
+#criteriaScroll{
+  overflow-x:auto;
+  overflow-y:hidden;
+  max-width:100%;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:4px;
+}
+/* 任意の横スクロールバー装飾 */
+#criteriaScroll::-webkit-scrollbar{height:10px}
+#criteriaScroll::-webkit-scrollbar-track{background:#181818}
+#criteriaScroll::-webkit-scrollbar-thumb{background:#333;border:2px solid #181818;border-radius:6px}
 
-/* ★変更: 陣営ラジオ 2段グリッド */
-.faction-wrapper{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  padding:4px 6px;
-  border:1px solid #333;
-  border-radius:6px;
-  background:#1b1b1b;
-}
-.faction-wrapper .faction-title{
-  font-size:11px;font-weight:600;color:#ddd;margin:0;
-}
-.faction-grid{
-  display:grid;
-  grid-template-columns:repeat(3, auto); /* 3列 */
-  grid-auto-rows:auto;
-  gap:4px 10px;
-  align-items:center;
-  font-size:11px;
-}
-.faction-grid label{
-  display:flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap;
-}
-.faction-grid input[type=radio]{accent-color:#ff44ff;cursor:pointer;}
+#criteriaPanel.open{padding:6px 8px 10px;max-height:520px;}
+#criteriaTable{border-collapse:collapse;width:100%;font-size:10px;line-height:1.45;min-width:760px;} /* min-width 追加 */
+#criteriaTable th,#criteriaTable td{border:1px solid #333;padding:4px 6px;vertical-align:top;text-align:left;}
+#criteriaTable thead th{background:#202020;font-weight:600;}
+#criteriaTable tbody th{background:#252525;white-space:nowrap;}
+#criteriaLegend{font-size:10px;color:#aaa;margin-top:4px;line-height:1.4;}
 </style>
 </head>
 <body>
@@ -126,73 +120,83 @@ mark{
   </div>
 
   <div class="controls-row">
-
-    <label class="inline">
-      <span class="caption">名前検索 <span class="note-small">(数値フィルタ無視)</span></span>
+    <label class="inline"><span class="caption">名前検索</span>
       <input id="fName" type="text" placeholder="部分一致">
     </label>
-
-    <label class="inline">
-      <span class="caption">表示件数</span>
+    <label class="inline"><span class="caption">表示件数</span>
       <input id="displayCount" type="range" min="10" max="200" step="10" value="100">
     </label>
 
-    <!-- AFK -->
-    <div class="group-block">
-      <h4>AFK</h4>
-      <div class="range-row">
-        <span style="font-size:10px;width:18px;text-align:right;">Min</span>
-        <input id="afkMin" type="range" min="1" max="5" step="1" value="2">
-        <div class="range-val" id="afkMinVal">2</div>
-      </div>
-      <div class="range-row">
-        <span style="font-size:10px;width:18px;text-align:right;">Max</span>
-        <input id="afkMax" type="range" min="1" max="5" step="1" value="5">
-        <div class="range-val" id="afkMaxVal">5</div>
-      </div>
+    <label class="inline"><span class="caption">AFK最小 <span class="val" id="vAfkMin">2</span></span>
+      <input id="fAfkMin" type="range" min="1" max="5" step="1" value="2">
+    </label>
+    <label class="inline"><span class="caption">AFK最大 <span class="val" id="vAfkMax">5</span></span>
+      <input id="fAfkMax" type="range" min="1" max="5" step="1" value="5">
+    </label>
+    <label class="inline"><span class="caption">PVP最小 <span class="val" id="vPvpMin">2</span></span>
+      <input id="fPvpMin" type="range" min="1" max="5" step="1" value="2">
+    </label>
+    <label class="inline"><span class="caption">PVP最大 <span class="val" id="vPvpMax">5</span></span>
+      <input id="fPvpMax" type="range" min="1" max="5" step="1" value="5">
+    </label>
+    <label class="inline"><span class="caption">幻影最小 <span class="val" id="vDrMin">2</span></span>
+      <input id="fDrMin" type="range" min="1" max="5" step="1" value="2">
+    </label>
+    <label class="inline"><span class="caption">幻影最大 <span class="val" id="vDrMax">5</span></span>
+      <input id="fDrMax" type="range" min="1" max="5" step="1" value="5">
+    </label>
+
+    <div class="faction-group" id="factionRadios">
+      <span style="font-weight:600;">陣営:</span>
+      <label><input type="radio" name="factionFilter" value="all" checked>All</label>
+      <label><input type="radio" name="factionFilter" value="1">ブライト</label>
+      <label><input type="radio" name="factionFilter" value="2">ババリア</label>
+      <label><input type="radio" name="factionFilter" value="3">ヴェルディア</label>
+      <label><input type="radio" name="factionFilter" value="4">グレイヴボーン</label>
+      <label><input type="radio" name="factionFilter" value="5">セレスチアル</label>
+      <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
     </div>
 
-    <!-- PVP -->
-    <div class="group-block">
-      <h4>PVP</h4>
-      <div class="range-row">
-        <span style="font-size:10px;width:18px;text-align:right;">Min</span>
-        <input id="pvpMin" type="range" min="1" max="5" step="1" value="2">
-        <div class="range-val" id="pvpMinVal">2</div>
-      </div>
-      <div class="range-row">
-        <span style="font-size:10px;width:18px;text-align:right;">Max</span>
-        <input id="pvpMax" type="range" min="1" max="5" step="1" value="5">
-        <div class="range-val" id="pvpMaxVal">5</div>
-      </div>
-    </div>
-
-    <!-- 幻影 -->
-    <div class="group-block">
-      <h4>幻影</h4>
-      <div class="range-row">
-        <span style="font-size:10px;width:18px;text-align:right;">Min</span>
-        <input id="drMin" type="range" min="1" max="5" step="1" value="2">
-        <div class="range-val" id="drMinVal">2</div>
-      </div>
-      <div class="range-row">
-        <span style="font-size:10px;width:18px;text-align:right;">Max</span>
-        <input id="drMax" type="range" min="1" max="5" step="1" value="5">
-        <div class="range-val" id="drMaxVal">5</div>
-      </div>
-    </div>
-
-    <!-- ★変更: 陣営 2段グリッド -->
-    <div class="faction-wrapper">
-      <p class="faction-title">陣営</p>
-      <div class="faction-grid" id="factionRadios">
-        <label><input type="radio" name="factionFilter" value="all" checked>All</label>
-        <label><input type="radio" name="factionFilter" value="1">ブライト</label>
-        <label><input type="radio" name="factionFilter" value="2">ババリア</label>
-        <label><input type="radio" name="factionFilter" value="3">ヴェルディア</label>
-        <label><input type="radio" name="factionFilter" value="4">グレイヴ</label>
-        <label><input type="radio" name="factionFilter" value="5">セレス</label>
-        <label><input type="radio" name="factionFilter" value="6">カタス</label>
+    <div id="criteriaWrapper">
+      <button id="criteriaToggle" type="button">評価基準 表示 ▼</button>
+      <div id="criteriaPanel">
+        <div id="criteriaScroll">
+          <table id="criteriaTable">
+            <thead>
+              <tr>
+                <th style="width:92px;"></th>
+                <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>幻影の域</th>
+                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に入っていない(0回)。</td>
+                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に1回入っている。</td>
+                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に2回入っている。</td>
+                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に3回入っている。</td>
+                <td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に4回以上入っている。</td>
+              </tr>
+              <tr>
+                <th>PVP</th>
+                <td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて入っていない(0回)。</td>
+                <td>直近5週で1回入っている。</td>
+                <td>直近5週で2回入っている。</td>
+                <td>直近5週で3回入っている。</td>
+                <td>直近5週で4回以上入っている。</td>
+              </tr>
+              <tr>
+                <th>AFKステージ</th>
+                <td>保有していなくともステージを進める上で問題にならない。</td>
+                <td>体感1割以上使用。</td>
+                <td>体感2割以上使用。</td>
+                <td>体感3割以上使用。</td>
+                <td>体感4割以上使用。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="criteriaLegend"></div>
       </div>
     </div>
 
@@ -215,8 +219,7 @@ mark{
     <table id="dataTable">
       <thead>
         <tr>
-          <th>名前</th>
-          <th>陣営</th>
+          <th>名前</th><th>陣営</th>
           <th data-sort-key="afkstage">AFK</th>
           <th data-sort-key="PVP">PVP</th>
           <th data-sort-key="DreamRealm">幻影</th>
@@ -231,25 +234,23 @@ mark{
 <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-/* 以降の JavaScript は前回と同一です（ロジック変更無し） */
-/* ==== 内部幾何倍率 ==== */
-const INITIAL_GEOM_SCALE = 1.25;
-let GEOM_SCALE = INITIAL_GEOM_SCALE;
-/* ==== 基本パラメータ ==== */
+/* ==== 定数 ==== */
+const INITIAL_GEOM_SCALE=1.25; let GEOM_SCALE=INITIAL_GEOM_SCALE;
 const IMG_W=180, IMG_H=200, REF_IMG_H=256;
 const SPRITE_SCALE=0.30*(IMG_H/REF_IMG_H);
 const SPACING_FACTOR=1.15, COLLISION_SAFETY=1.02;
 const FACTION_LABEL={1:'ブライト',2:'ババリア',3:'ヴェルディア',4:'グレイヴボーン',5:'セレスチアル',6:'カタストロフ'};
-const COLLAPSED_HEIGHT=110, EXPANDED_HEIGHT=240;
-const VIEW_OFFSET_Y=-0.9;
+const COLLAPSED_HEIGHT=110, EXPANDED_HEIGHT=240, VIEW_OFFSET_Y=-0.9;
 const SCALE_FACTOR=10, H=1.2;
 const MIN=1, MAX=5, SAFETY=1.05;
 const MIN_WEIGHT_BASE=SAFETY*SPRITE_SCALE/Math.sqrt(3);
 const MIN_DYN_SCALE=0.6, MAX_DYN_SCALE=2.2;
-const CLUSTER_EPS=1e-6, CLUSTER_SEP_RADIUS=1.05, CLUSTER_MARGIN_FACTOR=1.08, MIN_RING_RADIUS_RATIO=0.05;
-/* 状態 */
+const CLUSTER_EPS=1e-6;
+const SAFETY_MARGIN=1.05;
+let FACE_PLANES=null;
 let sortState={key:null,dir:1}, FULL_DATA=[];
-/* DOM */
+
+/* ==== DOM ==== */
 const threeContainer=document.getElementById('threeContainer');
 const bottomPanel=document.getElementById('bottomPanel'); bottomPanel.style.height=COLLAPSED_HEIGHT+'px';
 const toggleListBtn=document.getElementById('toggleListBtn');
@@ -260,23 +261,22 @@ const collisionScaleVal=document.getElementById('collisionScaleVal');
 const baseScaleVal=document.getElementById('baseScaleVal');
 const effectiveScaleVal=document.getElementById('effectiveScaleVal');
 const countBadge=document.getElementById('countBadge');
-const fName=document.getElementById('fName');
-const factionRadios=document.querySelectorAll('input[name="factionFilter"]');
+const fAfkMin=document.getElementById('fAfkMin'), fAfkMax=document.getElementById('fAfkMax');
+const fPvpMin=document.getElementById('fPvpMin'), fPvpMax=document.getElementById('fPvpMax');
+const fDrMin=document.getElementById('fDrMin'), fDrMax=document.getElementById('fDrMax');
 const btnFilterReset=document.getElementById('btnFilterReset');
 const btnRebuild=document.getElementById('btnRebuild');
 const dataTableBody=document.querySelector('#dataTable tbody');
+const factionRadios=document.querySelectorAll('input[name="factionFilter"]');
+const fName=document.getElementById('fName');
 const tooltip=document.getElementById('tooltip');
-/* スライダー */
-const afkMin=document.getElementById('afkMin'), afkMax=document.getElementById('afkMax');
-const pvpMin=document.getElementById('pvpMin'), pvpMax=document.getElementById('pvpMax');
-const drMin=document.getElementById('drMin'), drMax=document.getElementById('drMax');
-const afkMinVal=document.getElementById('afkMinVal'), afkMaxVal=document.getElementById('afkMaxVal');
-const pvpMinVal=document.getElementById('pvpMinVal'), pvpMaxVal=document.getElementById('pvpMaxVal');
-const drMinVal=document.getElementById('drMinVal'), drMaxVal=document.getElementById('drMaxVal');
-/* Three.js */
+const allRadio=document.querySelector('input[name="factionFilter"][value="all"]');
+
+/* ==== Three.js 変数 ==== */
 let scene, renderer, camera, controls, pivot, modelGroup, productGroup;
 let A,B,C,D,G;
 
+/* ==== 初期化 ==== */
 function initThree(){
   scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
   renderer=new THREE.WebGLRenderer({antialias:true});
@@ -284,18 +284,23 @@ function initThree(){
   renderer.setSize(threeContainer.clientWidth,threeContainer.clientHeight);
   threeContainer.appendChild(renderer.domElement);
   camera=new THREE.PerspectiveCamera(52,threeContainer.clientWidth/threeContainer.clientHeight,0.05,500);
-  controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;
   pivot=new THREE.Group(); scene.add(pivot);
   modelGroup=new THREE.Group(); pivot.add(modelGroup);
   pivot.position.y=VIEW_OFFSET_Y;
-  A=new THREE.Vector3(0,0,0); B=new THREE.Vector3(1,0,0); C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0); D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
+  A=new THREE.Vector3(0,0,0);
+  B=new THREE.Vector3(1,0,0);
+  C=new THREE.Vector3(0.5,Math.sqrt(3)/2,0);
+  D=new THREE.Vector3(0.5,Math.sqrt(3)/6,H);
   G=new THREE.Vector3().add(A).add(B).add(C).add(D).multiplyScalar(0.25);
-  buildTetra(); modelGroup.position.sub(G); buildLabels();
+  buildTetraWire(); modelGroup.position.sub(G); buildLabels();
   productGroup=new THREE.Group(); modelGroup.add(productGroup);
   camera.position.copy(new THREE.Vector3(2.2,1.9,2.6).normalize().multiplyScalar(3.5*SCALE_FACTOR));
-  controls.target.set(0,0,0); controls.update(); animate();
+  controls.target.set(0,0,0); controls.update();
+  animate();
 }
-function buildTetra(){
+function buildTetraWire(){
   const gBase=new THREE.BufferGeometry().setFromPoints([A,B,C]); gBase.setIndex([0,1,2]);
   modelGroup.add(new THREE.Mesh(gBase,new THREE.MeshBasicMaterial({color:0xff00ff,side:THREE.DoubleSide,transparent:true,opacity:0.25})));
   const gEdges=new THREE.BufferGeometry().setFromPoints([A,B,B,C,C,A,A,D,B,D,C,D]);
@@ -325,19 +330,64 @@ function buildLabels(){
     (()=>{const s=makeTextSprite('総合'); s.position.copy(D).add(new THREE.Vector3(0,0.12,0.02)); return s;})()
   );
 }
+
+/* ==== 面平面 ==== */
+function computeInwardFacePlanes(){
+  if(FACE_PLANES) return FACE_PLANES;
+  const faces=[[B,C,D],[A,D,C],[A,B,D],[A,C,B]];
+  FACE_PLANES=faces.map(f=>{
+    const [p0,p1,p2]=f;
+    const v1=new THREE.Vector3().subVectors(p1,p0);
+    const v2=new THREE.Vector3().subVectors(p2,p0);
+    let n=new THREE.Vector3().crossVectors(v1,v2).normalize();
+    if(n.dot(new THREE.Vector3().subVectors(G,p0))<0) n.multiplyScalar(-1);
+    const d=-n.dot(p0);
+    return {n,d};
+  });
+  return FACE_PLANES;
+}
+function clampSpritesInsideTetra(sprites){
+  if(!sprites.length) return;
+  const planes=computeInwardFacePlanes();
+  const targetDist=SPRITE_SCALE*SAFETY_MARGIN;
+  for(let iter=0; iter<3; iter++){
+    let moved=false;
+    for(const s of sprites){
+      const p=s.position;
+      for(const {n,d} of planes){
+        const dist=n.dot(p)+d;
+        if(dist<targetDist){ p.addScaledVector(n,targetDist-dist); moved=true; }
+      }
+    }
+    if(!moved) break;
+  }
+}
+
+/* ==== 数学 ==== */
 function norm(v){return (v-MIN)/(MAX-MIN);}
 function sumNorm(sum){return (sum-3*MIN)/(3*MAX-3*MIN);}
+
+/* ==== basePoint 改修版 ==== */
 function basePoint(p){
   let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
-  let s=wa+wb+wc; if(s===0){wa=wb=wc=1/3; s=1;}
+  let s=wa+wb+wc;
+  if(s===0){
+    return new THREE.Vector3(0,0,0);
+  }
   wa/=s; wb/=s; wc/=s;
   const floor=MIN_WEIGHT_BASE;
   if(wa<floor||wb<floor||wc<floor){
-    wa=Math.max(wa,floor); wb=Math.max(wb,floor); wc=Math.max(wc,floor);
+    wa=Math.max(wa,floor);
+    wb=Math.max(wb,floor);
+    wc=Math.max(wc,floor);
     const s2=wa+wb+wc; wa/=s2; wb/=s2; wc/=s2;
   }
-  return new THREE.Vector3().addScaledVector(A,wa).addScaledVector(B,wb).addScaledVector(C,wc);
+  return new THREE.Vector3()
+    .addScaledVector(A,wa)
+    .addScaledVector(B,wb)
+    .addScaledVector(C,wc);
 }
+
 function position3D(p){return basePoint(p).lerp(D,sumNorm(p.sum));}
 function computeDynamicScale(arr){
   if(!arr.length) return 1;
@@ -377,11 +427,10 @@ function computeCollisionExpand(arr, baseScale){
   if(expand<1) expand=1;
   return expand;
 }
+
+/* ==== クラスタ分離（六角格子） ==== */
 function separateClusters(sprites, finalScale){
   if(sprites.length<=1) return;
-  const rIn=Math.sqrt(3)/6;
-  const worldSpriteRadius=SPRITE_SCALE*finalScale;
-  const safeMaxRadius=Math.max(rIn - worldSpriteRadius*CLUSTER_MARGIN_FACTOR,0);
   const clusters=new Map();
   for(const s of sprites){
     const p=s.position;
@@ -389,20 +438,42 @@ function separateClusters(sprites, finalScale){
     if(!clusters.has(key)) clusters.set(key,[]);
     clusters.get(key).push(s);
   }
+  const worldSpriteRadius=SPRITE_SCALE*finalScale;
+  const PACK_SPACING=1.05;
   clusters.forEach(list=>{
-    if(list.length<2) return;
     const n=list.length;
-    let baseR=worldSpriteRadius*CLUSTER_SEP_RADIUS*(1+0.10*(n-2));
-    if(baseR>safeMaxRadius) baseR=safeMaxRadius;
-    const minAllowed=worldSpriteRadius*MIN_RING_RADIUS_RATIO;
-    if(baseR<minAllowed) return;
-    list.forEach((s,i)=>{
-      const ang=(2*Math.PI*i)/n;
-      s.position.x+=baseR*Math.cos(ang);
-      s.position.y+=baseR*Math.sin(ang);
+    if(n<2) return;
+    const coords=[[0,0]];
+    if(n>1){
+      let placed=1, ring=1;
+      while(placed<n){
+        let q=0,r=-ring;
+        const dirs=[[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
+        for(let d=0; d<6 && placed<n; d++){
+          const [dq,dr]=dirs[d];
+          for(let step=0; step<ring && placed<n; step++){
+            coords.push([q,r]); placed++; q+=dq; r+=dr;
+          }
+        }
+        ring++; if(ring>30) break;
+      }
+    }
+    const spacing=worldSpriteRadius*PACK_SPACING;
+    const pts=coords.slice(0,n).map(([q,r])=>{
+      const x=spacing*(1.5*q);
+      const y=spacing*(Math.sqrt(3)/2*(2*r+q));
+      return {x,y};
     });
+    const cx=pts.reduce((a,p)=>a+p.x,0)/pts.length;
+    const cy=pts.reduce((a,p)=>a+p.y,0)/pts.length;
+    for(let i=0;i<n;i++){
+      list[i].position.x+=pts[i].x-cx;
+      list[i].position.y+=pts[i].y-cy;
+    }
   });
 }
+
+/* ==== フィルタ ==== */
 function normalizeName(s){
   if(!s) return '';
   return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
@@ -413,15 +484,14 @@ function getSelectedFaction(){const r=[...factionRadios].find(r=>r.checked); ret
 function getFilter(){
   return {
     nameQuery:normalizeName(fName.value.trim()),
-    afkMin:+afkMin.value, afkMax:+afkMax.value,
-    pvpMin:+pvpMin.value, pvpMax:+pvpMax.value,
-    drMin:+drMin.value,   drMax:+drMax.value,
+    afkMin:+fAfkMin.value, afkMax:+fAfkMax.value,
+    pvpMin:+fPvpMin.value, pvpMax:+fPvpMax.value,
+    drMin:+fDrMin.value,   drMax:+fDrMax.value,
     faction:getSelectedFaction()
   };
 }
 function passFilter(p,f){
   if(f.nameQuery){
-    if(f.faction!=='all' && p.faction!==+f.faction) return false;
     return normalizeName(p.name).includes(f.nameQuery);
   }
   if(!(p.afkstage>=f.afkMin && p.afkstage<=f.afkMax &&
@@ -438,8 +508,19 @@ function highlight(text,q){
   if(i<0) return escapeHtml(text);
   return escapeHtml(text.slice(0,i))+'<mark>'+escapeHtml(text.slice(i,i+q.length))+'</mark>'+escapeHtml(text.slice(i+q.length));
 }
+
+/* ==== 値表示 ==== */
+function updateRangeDisplays(){
+  const setVal=(id,input)=>{const el=document.getElementById(id); if(el) el.textContent=input.value;};
+  setVal('vAfkMin',fAfkMin); setVal('vAfkMax',fAfkMax);
+  setVal('vPvpMin',fPvpMin); setVal('vPvpMax',fPvpMax);
+  setVal('vDrMin',fDrMin);   setVal('vDrMax',fDrMax);
+}
+
+/* ==== 再構築 ==== */
 const palette=['#ff00ff','#ff33ff','#ff66ff','#ff00cc','#ff1493','#ff55aa','#ff99dd','#cc44ff','#ff22aa','#ffaaee'];
-let lastBaseScale=SCALE_FACTOR,lastCollisionExpand=1;
+let lastBaseScale=SCALE_FACTOR, lastCollisionExpand=1;
+
 function rebuild(){
   if(!productGroup) return;
   while(productGroup.children.length) productGroup.remove(productGroup.children[0]);
@@ -450,7 +531,7 @@ function rebuild(){
   const filtered=subset.filter(p=>passFilter(p,filter));
   filtered.forEach(p=>p.sum=p.afkstage+p.PVP+p.DreamRealm);
   if(sortState.key){
-    const k=sortState.key,d=sortState.dir;
+    const k=sortState.key, d=sortState.dir;
     filtered.sort((a,b)=>(a[k]-b[k])*d);
   }
   const dyn=computeDynamicScale(filtered);
@@ -488,13 +569,15 @@ function rebuild(){
                   <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
     dataTableBody.appendChild(tr);
   });
-  separateClusters(sprites,finalScale);
+  separateClusters(sprites, finalScale);
+  clampSpritesInsideTetra(sprites);
   if(!filtered.length){
-    const tr=document.createElement('tr'); tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td colspan="6" class="no-data">(該当なし)</td>';
     dataTableBody.appendChild(tr);
   }
   dynScaleVal.textContent=dyn.toFixed(3);
-  const clampedFlag=collisionExpand>=2.999?'*':'';
+  const clampedFlag = collisionExpand >= 2.999 ? '*' : '';
   collisionScaleVal.textContent='col '+collisionExpand.toFixed(3)+clampedFlag;
   baseScaleVal.textContent=baseScale.toFixed(2);
   effectiveScaleVal.textContent=finalScale.toFixed(2);
@@ -503,8 +586,9 @@ function rebuild(){
     const key=th.getAttribute('data-sort-key');
     const baseText=th.getAttribute('data-base-text')||th.textContent.replace(/[▲▼]/,'').trim();
     if(!th.getAttribute('data-base-text')) th.setAttribute('data-base-text',baseText);
-    th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼'):baseText;
+    th.textContent=(sortState.key===key)? baseText+(sortState.dir===1?' ▲':' ▼') : baseText;
   });
+  updateRangeDisplays();
   resizeRenderer();
 }
 function rebuildEmpty(){
@@ -513,8 +597,11 @@ function rebuildEmpty(){
   baseScaleVal.textContent=SCALE_FACTOR.toFixed(2);
   effectiveScaleVal.textContent=(SCALE_FACTOR*GEOM_SCALE).toFixed(2);
   countBadge.textContent='0/0';
+  updateRangeDisplays();
   resizeRenderer();
 }
+
+/* ==== データ ==== */
 function isValidRecord(p){
   return p && typeof p.name==='string' && p.name.length>0 &&
     Number.isInteger(p.afkstage)&&p.afkstage>=1&&p.afkstage<=5 &&
@@ -533,11 +620,12 @@ function loadData(){
     })
     .catch(err=>{
       console.error(err);
-      loadStatus.textContent='Error';
+      loadStatus.textContent='Error(loadData)';
       loadStatus.classList.add('status-error');
     });
 }
-/* ソート */
+
+/* ==== イベント ==== */
 document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
   th.addEventListener('click',()=>{
     const key=th.getAttribute('data-sort-key');
@@ -545,42 +633,42 @@ document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
     rebuild();
   });
 });
-/* スライダー同期 */
-function bindRangePair(minEl,maxEl,minValEl,maxValEl){
-  function update(){
-    if(+minEl.value>+maxEl.value){
-      if(lastChanged==='min') maxEl.value=minEl.value;
-      else minEl.value=maxEl.value;
-    }
-    minValEl.textContent=minEl.value;
-    maxValEl.textContent=maxEl.value;
-    rebuild();
-  }
-  let lastChanged='min';
-  minEl.addEventListener('input',()=>{lastChanged='min';update();});
-  maxEl.addEventListener('input',()=>{lastChanged='max';update();});
-  update();
-}
-bindRangePair(afkMin,afkMax,afkMinVal,afkMaxVal);
-bindRangePair(pvpMin,pvpMax,pvpMinVal,pvpMaxVal);
-bindRangePair(drMin,drMax,drMinVal,drMaxVal);
 displayCountEl.addEventListener('input',rebuild);
+[fAfkMin,fAfkMax,fPvpMin,fPvpMax,fDrMin,fDrMax].forEach(inp=>{
+  inp.addEventListener('input',()=>{
+    const id=inp.id;
+    if(id.endsWith('Min')){
+      const maxEl=document.getElementById(id.replace('Min','Max'));
+      if(+inp.value>+maxEl.value) maxEl.value=inp.value;
+    } else {
+      const minEl=document.getElementById(id.replace('Max','Min'));
+      if(+inp.value<+minEl.value) minEl.value=inp.value;
+    }
+    updateRangeDisplays();
+    rebuild();
+  });
+});
 factionRadios.forEach(r=>r.addEventListener('change',rebuild));
 btnFilterReset.addEventListener('click',()=>{
   fName.value='';
-  afkMin.value=2;afkMax.value=5;afkMinVal.textContent='2';afkMaxVal.textContent='5';
-  pvpMin.value=2;pvpMax.value=5;pvpMinVal.textContent='2';pvpMaxVal.textContent='5';
-  drMin.value=2;drMax.value=5;drMinVal.textContent='2';drMaxVal.textContent='5';
-  document.querySelector('input[name="factionFilter"][value="all"]').checked=true;
-  sortState={key:null,dir:1}; GEOM_SCALE=INITIAL_GEOM_SCALE;
+  fAfkMin.value=2; fAfkMax.value=5;
+  fPvpMin.value=2; fPvpMax.value=5;
+  fDrMin.value=2; fDrMax.value=5;
+  allRadio.checked=true;
+  sortState={key:null,dir:1};
+  GEOM_SCALE=INITIAL_GEOM_SCALE;
+  updateRangeDisplays();
   rebuild();
 });
 btnRebuild.addEventListener('click',rebuild);
+
 let nameDebTimer=null;
 fName.addEventListener('input',()=>{
   if(nameDebTimer) clearTimeout(nameDebTimer);
+  if(fName.value.trim()!==''){ allRadio.checked=true; }
   nameDebTimer=setTimeout(()=>rebuild(),90);
 });
+
 function toggleList(){
   let listExpanded=bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
   listExpanded=!listExpanded;
@@ -589,6 +677,20 @@ function toggleList(){
   setTimeout(resizeRenderer,260);
 }
 toggleListBtn.addEventListener('click',toggleList);
+
+/* 評価基準パネル */
+(function(){
+  const toggleBtn=document.getElementById('criteriaToggle');
+  const panel=document.getElementById('criteriaPanel');
+  if(toggleBtn && panel){
+    toggleBtn.addEventListener('click',()=>{
+      const open=panel.classList.toggle('open');
+      toggleBtn.textContent=open?'評価基準 隠す ▲':'評価基準 表示 ▼';
+      setTimeout(()=>resizeRenderer(),380);
+    });
+  }
+})();
+
 /* ホバー */
 const raycaster=new THREE.Raycaster(), mouse=new THREE.Vector2();
 addEventListener('mousemove',e=>{
@@ -609,12 +711,14 @@ addEventListener('mousemove',e=>{
     }
   } else tooltip.style.display='none';
 });
-/* 回転キー */
+
+/* キー回転 */
 addEventListener('keydown',e=>{
   if(!pivot) return;
   if(e.code==='KeyQ') pivot.rotation.z+=0.05;
   if(e.code==='KeyE') pivot.rotation.z-=0.05;
 });
+
 /* リサイズ */
 function resizeRenderer(){
   if(!renderer||!camera) return;
@@ -625,17 +729,25 @@ function resizeRenderer(){
   camera.updateProjectionMatrix();
 }
 addEventListener('resize',resizeRenderer);
+
 /* ループ */
 function animate(){
   requestAnimationFrame(animate);
   if(controls) controls.update();
   if(renderer && scene && camera){
-    if(productGroup) productGroup.children.forEach(s=>s.quaternion.copy(camera.quaternion));
+    if(productGroup){
+      productGroup.children.forEach(s=>s.quaternion.copy(camera.quaternion));
+    }
     renderer.render(scene,camera);
   }
 }
+
 /* 初期化 */
-function init(){ initThree(); rebuildEmpty(); loadData(); }
+function init(){
+  initThree();
+  rebuildEmpty();
+  loadData();
+}
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
