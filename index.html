@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>AFKJ Tier表-3D</title>
+<title>AFKJ Tier表-3D (はみ出し防止 / Z積層なし)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 :root{
@@ -75,23 +75,6 @@ table tbody td{padding:4px 6px;border-bottom:1px solid #222;text-align:right;whi
 mark{
   background:#ff44ff55;color:#fff;padding:0 2px;border-radius:2px;
 }
-
-/* 指標マトリクス */
-#metricMatrixWrapper{flex:1 1 100%;width:100%;padding:2px 0 0;overflow-x:auto;}
-#metricMatrix{
-  border-collapse:collapse;font-size:10px;background:#181818;min-width:0;margin-top:4px;table-layout:auto;
-}
-#metricMatrix th,#metricMatrix td{
-  border:1px solid #333;padding:3px 6px;white-space:nowrap;
-  text-align:left;
-}
-#metricMatrix thead th{background:#202020;font-weight:600;}
-#metricMatrix thead th:first-child{width:1%;white-space:nowrap;padding:3px 4px;}
-#metricMatrix tbody th{
-  background:#252525;font-weight:600;width:1%;white-space:nowrap;padding:3px 4px;
-}
-#metricMatrix td{background:#1d1d1d;}
-#metricMatrix td:hover{background:#2a2a2a;}
 </style>
 </head>
 <body>
@@ -131,22 +114,6 @@ mark{
       <label><input type="radio" name="factionFilter" value="4">グレイヴボーン</label>
       <label><input type="radio" name="factionFilter" value="5">セレスチアル</label>
       <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
-    </div>
-
-    <div id="metricMatrixWrapper">
-      <table id="metricMatrix">
-        <thead>
-          <tr>
-            <th></th>
-            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><th>幻影の域</th><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に入っていない(0回)。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に1回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に2回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に3回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に4回以上入っている。</td></tr>
-          <tr><th>PVP</th><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて入っていない(0回)。</td><td>直近5週で1回入っている。</td><td>直近5週で2回入っている。</td><td>直近5週で3回入っている。</td><td>直近5週で4回以上入っている。</td></tr>
-          <tr><th>AFKステージ</th><td>保有していなくともステージを進める上で問題にならない。</td><td>体感1割以上使用。</td><td>体感2割以上使用。</td><td>体感3割以上使用。</td><td>体感4割以上使用。</td></tr>
-        </tbody>
-      </table>
     </div>
 
     <button id="btnFilterReset">フィルタReset</button>
@@ -202,7 +169,9 @@ const MIN_DYN_SCALE=0.6, MAX_DYN_SCALE=2.2;
 
 /* ==== クラスタ分離 ==== */
 const CLUSTER_EPS = 1e-6;
-const CLUSTER_SEP_RADIUS = 1.15;
+const CLUSTER_SEP_RADIUS = 1.05;
+const CLUSTER_MARGIN_FACTOR = 1.08;
+const MIN_RING_RADIUS_RATIO = 0.05; // 極小時は中心重ね許容（Z積層なし）
 
 /* ==== 状態 ==== */
 let sortState={key:null,dir:1};
@@ -351,25 +320,42 @@ function computeCollisionExpand(arr, baseScale){
   return expand;
 }
 
-/* ====== クラスタ分離 ====== */
+/* ====== クラスタ分離（Z積層なし・底面内クランプ） ====== */
 function separateClusters(sprites, finalScale){
   if(sprites.length <= 1) return;
-  const clusters = new Map();
+  const rIn = Math.sqrt(3)/6;               // 底面内接円半径
+  const worldSpriteRadius = SPRITE_SCALE * finalScale;
+  const safeMaxRadius = Math.max(rIn - worldSpriteRadius*CLUSTER_MARGIN_FACTOR, 0);
+
+  // 位置丸めクラスタ
+  const clusters=new Map();
   for(const s of sprites){
-    const p = s.position;
-    const key = Math.round(p.x/CLUSTER_EPS)+'_'+Math.round(p.y/CLUSTER_EPS)+'_'+Math.round(p.z/CLUSTER_EPS);
-    if(!clusters.has(key)) clusters.set(key, []);
+    const p=s.position;
+    const key=Math.round(p.x/CLUSTER_EPS)+'_'+Math.round(p.y/CLUSTER_EPS)+'_'+Math.round(p.z/CLUSTER_EPS);
+    if(!clusters.has(key)) clusters.set(key,[]);
     clusters.get(key).push(s);
   }
-  const worldSpriteRadius = SPRITE_SCALE * finalScale;
+
   clusters.forEach(list=>{
-    if(list.length < 2) return;
+    if(list.length<2) return;
     const n=list.length;
-    const baseR=worldSpriteRadius*CLUSTER_SEP_RADIUS*(1+0.12*(n-2));
+
+    // ベース半径（スプライトが重ならない程度）
+    let baseR = worldSpriteRadius * CLUSTER_SEP_RADIUS * (1 + 0.10*(n-2));
+    if(baseR > safeMaxRadius) baseR = safeMaxRadius;
+
+    // 最小半径制限 (極小 → 中心重ね)
+    const minAllowed = worldSpriteRadius * MIN_RING_RADIUS_RATIO;
+    if(baseR < minAllowed){
+      // ほぼ重ね、XYずらし無し（Z も触らない）
+      return;
+    }
+
     list.forEach((s,i)=>{
       const ang=(2*Math.PI*i)/n;
-      s.position.x += Math.cos(ang)*baseR;
-      s.position.y += Math.sin(ang)*baseR;
+      s.position.x += baseR * Math.cos(ang);
+      s.position.y += baseR * Math.sin(ang);
+      // Z 方向変更なし
     });
   });
 }
@@ -391,24 +377,14 @@ function getFilter(){
     faction:getSelectedFaction()
   };
 }
-
-/* === 修正済 passFilter === */
 function passFilter(p,f){
-  const hasName = !!f.nameQuery;
-  if(hasName){
-    // 名前検索時：数値レンジ無視・陣営 + 名前のみ
-    if(f.faction!=='all' && p.faction!==+f.faction) return false;
-    if(!normalizeName(p.name).includes(f.nameQuery)) return false;
-    return true;
-  }
-  // 通常（名前空）: 数値レンジ + 陣営
   if(!(p.afkstage>=f.afkMin && p.afkstage<=f.afkMax &&
        p.PVP>=f.pvpMin && p.PVP<=f.pvpMax &&
        p.DreamRealm>=f.drMin && p.DreamRealm<=f.drMax)) return false;
   if(f.faction!=='all' && p.faction!==+f.faction) return false;
+  if(f.nameQuery && !normalizeName(p.name).includes(f.nameQuery)) return false;
   return true;
 }
-
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function highlight(text,q){
   if(!text) return '';
@@ -478,6 +454,7 @@ function rebuild(){
     dataTableBody.appendChild(tr);
   });
 
+  // Z積層なしクラスタ分離
   separateClusters(sprites, finalScale);
 
   if(!filtered.length){
@@ -643,10 +620,6 @@ function init(){
   loadData();
 }
 window.addEventListener('DOMContentLoaded', init);
-
-/* コンソール用:
-   GEOM_SCALE = 1.6; rebuild();
-*/
 </script>
 </body>
 </html>

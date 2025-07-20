@@ -6,24 +6,15 @@
     "DreamRealm": 1,
     "faction": 1,
     "image": "images/Atalanta.PNG",
-    "meta": { "role": "DPS" }
+    "meta": { "role": "TEST" }
   },
   {
-    "name": "エルロン",
-    "afkstage": 5,
-    "PVP": 5,
+    "name": "カスティー",
+    "afkstage": 1,
+    "PVP": 1,
     "DreamRealm": 1,
-    "faction": 3,
-    "image": "images/Hero_Eironn_Ult.webp",
-    "meta": { "role": "DPS" }
-  },
-  {
-    "name": "インドラ",
-    "afkstage": 2,
-    "PVP": 3,
-    "DreamRealm": 5,
-    "faction": 3,
-    "image": "images/Hero_Indris_Ult.webp",
-    "meta": { "role": "Burst" }
+    "faction": 1,
+    "image": "images/Cassadee.PNG",
+    "meta": { "role": "TEST" }
   }
 ]
