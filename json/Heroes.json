@@ -273,7 +273,7 @@
     "name": "アクン_モンモン",
     "afkstage": 3,
     "PVP": 1,
-    "DreamRealm": 2,
+    "DreamRealm": 3,
     "faction": 2,
     "image": "images/Smokey_Meerky.PNG",
     "meta": { "role": "TEST" }
@@ -703,7 +703,7 @@
   },
   {
     "name": "プルースト",
-    "afkstage": 1,
+    "afkstage": 2,
     "PVP": 4,
     "DreamRealm": 5,
     "faction": 6,
@@ -714,7 +714,7 @@
     "name": "エニエ",
     "afkstage": 2,
     "PVP": 1,
-    "DreamRealm": 4,
+    "DreamRealm": 3,
     "faction": 6,
     "image": "images/Reinier.PNG",
     "meta": { "role": "TEST" }
