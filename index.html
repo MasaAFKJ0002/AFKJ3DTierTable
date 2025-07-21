@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>AFKJ Tier表-3D</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="topBar">
+  <div class="controls-row" style="gap:16px">
+    <span class="section-title">英雄 3DTier表</span>
+    <div class="metric-badge" id="dynScaleVal">dyn -</div>
+    <div class="metric-badge" id="collisionScaleVal">col -</div>
+    <div class="metric-badge" id="baseScaleVal">base -</div>
+    <div class="metric-badge" id="effectiveScaleVal">eff -</div>
+    <div class="metric-badge" id="countBadge">0/0</div>
+    <span class="status-badge" id="loadStatus">Init...</span>
+  </div>
+  <div class="controls-row">
+    <label class="inline"><span class="caption">名前検索</span><input id="fName" type="text" placeholder="部分一致"></label>
+    <label class="inline"><span class="caption">表示件数</span><input id="displayCount" type="range" min="10" max="200" step="10" value="100"></label>
+    <label class="inline"><span class="caption">AFK最小 <span class="val" id="vAfkMin">2</span></span><input id="fAfkMin" type="range" min="1" max="5" step="1" value="2"></label>
+    <label class="inline"><span class="caption">AFK最大 <span class="val" id="vAfkMax">5</span></span><input id="fAfkMax" type="range" min="1" max="5" step="1" value="5"></label>
+    <label class="inline"><span class="caption">PVP最小 <span class="val" id="vPvpMin">2</span></span><input id="fPvpMin" type="range" min="1" max="5" step="1" value="2"></label>
+    <label class="inline"><span class="caption">PVP最大 <span class="val" id="vPvpMax">5</span></span><input id="fPvpMax" type="range" min="1" max="5" step="1" value="5"></label>
+    <label class="inline"><span class="caption">幻影最小 <span class="val" id="vDrMin">2</span></span><input id="fDrMin" type="range" min="1" max="5" step="1" value="2"></label>
+    <label class="inline"><span class="caption">幻影最大 <span class="val" id="vDrMax">5</span></span><input id="fDrMax" type="range" min="1" max="5" step="1" value="5"></label>
+    <div class="faction-group" id="factionRadios">
+      <span style="font-weight:600;">陣営:</span>
+      <label><input type="radio" name="factionFilter" value="all" checked>All</label>
+      <label><input type="radio" name="factionFilter" value="1">ブライト</label>
+      <label><input type="radio" name="factionFilter" value="2">ババリア</label>
+      <label><input type="radio" name="factionFilter" value="3">ヴェルディア</label>
+      <label><input type="radio" name="factionFilter" value="4">グレイヴボーン</label>
+      <label><input type="radio" name="factionFilter" value="5">セレスチアル</label>
+      <label><input type="radio" name="factionFilter" value="6">カタストロフ</label>
+      <label><input type="radio" name="factionFilter" value="7">ボイド</label>
+    </div>
+    <div id="criteriaWrapper">
+      <button id="criteriaToggle" type="button">評価基準 表示 ▼</button>
+      <div id="criteriaPanel">
+        <div id="criteriaScroll">
+          <table id="criteriaTable">
+            <thead><tr><th style="width:92px;"></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+            <tbody>
+              <tr><th>幻影の域</th><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に入っていない(0回)。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に1回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に2回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に3回入っている。</td><td>月曜日を開始日として、その週のYaphallaの左上のメタ編成に4回以上入っている。</td></tr>
+              <tr><th>PVP</th><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて入っていない(0回)。</td><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて1回入っている。</td><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて2回入っている。</td><td>某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて3回入っている。</td><td>"某攻略系Youtuber殿の殿堂アリーナ防衛編成で、直近から5週分に於いて4回以上入っている。</td></tr>
+              <tr><th>AFKステージ</th><td>保有していなくともステージを進める上で問題にならない。</td><td>ステージを進める上で体感1割以上使用している。</td><td>ステージを進める上で体感2割以上使用している。</td><td>ステージを進める上で体感3割以上使用している。</td><td>ステージを進める上で体感4割以上使用している。</td></tr>
+            </tbody>
+          </table>
+        </div><div id="criteriaLegend"></div>
+      </div>
+    </div>
+    <button id="btnFilterReset">フィルタReset</button>
+    <button id="btnRebuild">再計算</button>
+  </div>
+</div>
+
+<div id="viewerContainer"><div id="threeContainer"></div><div id="tooltip"></div></div>
+<div id="bottomPanel">
+  <div id="bottomPanelHeader"><strong>英雄一覧 (フィルタ後)</strong><button id="toggleListBtn">一覧▲</button></div>
+  <div id="dataTableWrapper">
+    <table id="dataTable">
+      <thead><tr><th>名前</th><th>陣営</th><th data-sort-key="afkstage">AFK</th><th data-sort-key="PVP">PVP</th><th data-sort-key="DreamRealm">幻影</th><th data-sort-key="sum">合計</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

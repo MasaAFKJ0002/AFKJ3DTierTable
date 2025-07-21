@@ -1,0 +1,740 @@
+[
+  {
+    "name": "アタランテ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Atalanta.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "カスティー",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Cassadee.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ディアグレス",
+    "afkstage": 3,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Cyran.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "フィー",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Fay.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "フーキン",
+    "afkstage": 5,
+    "PVP": 1,
+    "DreamRealm": 2,
+    "faction": 1,
+    "image": "images/Hugin.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "コリン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Korin.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ルカ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Lucca.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ルシウス",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Lucius.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "メリス",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Marilee.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ミレイル",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Mirael.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ロワン",
+    "afkstage": 3,
+    "PVP": 3,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Rowan.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "シンドバッド",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Sinbad.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ソニア",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 2,
+    "faction": 1,
+    "image": "images/Sonja.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "テミシア",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Temesia.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ヴィラ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Vala.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ヴァレン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Valen.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ウォルク",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 1,
+    "image": "images/Walker.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アルサ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Alsa.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アンタンドラ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Antandra.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ブルータス",
+    "afkstage": 5,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Brutus.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ガルダ",
+    "afkstage": 2,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Gerda.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ココ",
+    "afkstage": 4,
+    "PVP": 3,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Koko.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "クルーガー",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 3,
+    "faction": 2,
+    "image": "images/Kruger.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "マンカラ",
+    "afkstage": 2,
+    "PVP": 3,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Mikola.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ルル",
+    "afkstage": 2,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Lumont.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "リース",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Rhys.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アド",
+    "afkstage": 3,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Odie.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "サテラ",
+    "afkstage": 1,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Satrana.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "セト",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Seth.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "シャキール",
+    "afkstage": 1,
+    "PVP": 3,
+    "DreamRealm": 2,
+    "faction": 2,
+    "image": "images/Shakir.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アクン_モンモン",
+    "afkstage": 3,
+    "PVP": 1,
+    "DreamRealm": 2,
+    "faction": 2,
+    "image": "images/Smokey_Meerky.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ソーン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 2,
+    "image": "images/Soren.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アルドン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Arden.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ブライアン",
+    "afkstage": 3,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Bryon.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ダミアン",
+    "afkstage": 1,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Damian.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "エルロン",
+    "afkstage": 5,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Eironn.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "フェルガルド",
+    "afkstage": 5,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Faramor.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "フラベル",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Florabelle.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ダウナエ",
+    "afkstage": 2,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/GrannyDahnie.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "イヴォンヌ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Hewynn.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "インドラ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Indris.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "カブラ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Kafra.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ラミア",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Lenya.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "メイ",
+    "afkstage": 3,
+    "PVP": 4,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/LilyMay.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "クイン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Lorsan.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ライカ",
+    "afkstage": 1,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Lyca.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "パリーサ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Parisa.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "タシー",
+    "afkstage": 4,
+    "PVP": 4,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Tasi.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "タドール",
+    "afkstage": 4,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Thador.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アルマス",
+    "afkstage": 5,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 3,
+    "image": "images/Ulmus.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "エイン",
+    "afkstage": 5,
+    "PVP": 1,
+    "DreamRealm": 5,
+    "faction": 3,
+    "image": "images/Velara.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ボニー",
+    "afkstage": 4,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Bonnie.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ゴーラン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Callan.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "カレリーナ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Carolina.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "セシア",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Cesia.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ダイモン",
+    "afkstage": 3,
+    "PVP": 5,
+    "DreamRealm": 2,
+    "faction": 4,
+    "image": "images/Daimon.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ホジキン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Hodgkin.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "イゴール",
+    "afkstage": 1,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Igor.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "リュボミル",
+    "afkstage": 1,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Ludovic.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ナーラ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Nara.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ニル",
+    "afkstage": 4,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Niru.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "スレイザー",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Salazer.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "シェミーラ",
+    "afkstage": 5,
+    "PVP": 5,
+    "DreamRealm": 5,
+    "faction": 4,
+    "image": "images/Shemira.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "シルヴィナ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Silvina.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "トーラン",
+    "afkstage": 1,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Thoran.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ヴェリカ",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Valka.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ヴェパリアン",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 4,
+    "image": "images/Viperian.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "アタリア",
+    "afkstage": 1,
+    "PVP": 5,
+    "DreamRealm": 1,
+    "faction": 5,
+    "image": "images/Athalia.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "バハラム",
+    "afkstage": 5,
+    "PVP": 1,
+    "DreamRealm": 4,
+    "faction": 5,
+    "image": "images/Baelran.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "サジタリス",
+    "afkstage": 1,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 5,
+    "image": "images/Dionel.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ドレアル",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 5,
+    "image": "images/Dunlingr.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "エリア_ライラ",
+    "afkstage": 5,
+    "PVP": 3,
+    "DreamRealm": 5,
+    "faction": 5,
+    "image": "images/Elijah_Lailah.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "スケッギョルド",
+    "afkstage": 1,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 5,
+    "image": "images/Scarlita.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "タレン",
+    "afkstage": 2,
+    "PVP": 2,
+    "DreamRealm": 1,
+    "faction": 5,
+    "image": "images/Talene.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ベリル",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 6,
+    "image": "images/Berial.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ティスニア",
+    "afkstage": 1,
+    "PVP": 3,
+    "DreamRealm": 1,
+    "faction": 6,
+    "image": "images/Cryonaia.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ハラック",
+    "afkstage": 1,
+    "PVP": 1,
+    "DreamRealm": 3,
+    "faction": 6,
+    "image": "images/Harak.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "クルル",
+    "afkstage": 3,
+    "PVP": 3,
+    "DreamRealm": 1,
+    "faction": 6,
+    "image": "images/Kulu.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "プルースト",
+    "afkstage": 1,
+    "PVP": 4,
+    "DreamRealm": 5,
+    "faction": 6,
+    "image": "images/Phraesto.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "エニエ",
+    "afkstage": 2,
+    "PVP": 1,
+    "DreamRealm": 4,
+    "faction": 6,
+    "image": "images/Reinier.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ナツ",
+    "afkstage": 3,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 7,
+    "image": "images/Natsu.PNG",
+    "meta": { "role": "TEST" }
+  },
+  {
+    "name": "ルーシー",
+    "afkstage": 5,
+    "PVP": 1,
+    "DreamRealm": 1,
+    "faction": 7,
+    "image": "images/Lucy.PNG",
+    "meta": { "role": "TEST" }
+  }
+]
