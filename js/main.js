@@ -15,12 +15,12 @@ const SUM_MIN_REAL = 3, SUM_MAX_REAL = 15;
 const RAD_MARGIN_COEFF = 1.15;
 const SUM15_EPS_T = 0.995;
 const CLUSTER_PULL_FACTOR = 0.12;
-const OUT_OF_BOUNDS_PULL = 0.8;               // ★ 拡散抑制: 内側へ戻す力を強める (0.15→0.30)
+const OUT_OF_BOUNDS_PULL = 0.8;               // 拡散抑制: 内側へ戻す力を強める
 const TOP_SPRITE_ALIGN = 'bottom';
 
-/* ★ 新規追加定数 */
+/* 新規追加定数 */
 const MIN_RING_RADIUS_FACTOR = 0.85;           // 同スコア重複リングの最小半径係数
-const MAX_COLLISION_EXPAND = 0.9;              // 衝突回避拡大の上限 (3.0→1.8)
+const MAX_COLLISION_EXPAND = 0.9;              // 衝突回避拡大の上限
 
 /* ==== 状態 ==== */
 let FACE_PLANES = null;
@@ -49,7 +49,7 @@ const tooltip = document.getElementById('tooltip');
 const allRadio = document.querySelector('input[name="factionFilter"][value="all"]');
 
 /* ==== Three.js 変数 ==== */
-let scene, renderer, camera, controls, pivot, modelGroup, productGroup;
+let scene, renderer, camera, controls, pivot, modelGroup, chartGroup, productGroup;
 let A, B, C, D, G, BASE_CENTER, XY_CENTER;
 
 /* ==== 初期化 ==== */
@@ -65,26 +65,23 @@ function initThree() {
 
   pivot = new THREE.Group(); scene.add(pivot);
   modelGroup = new THREE.Group(); pivot.add(modelGroup);
-  pivot.position.y = VIEW_OFFSET_Y; // 四面体全体を下げて上部余白確保
+  chartGroup = new THREE.Group(); modelGroup.add(chartGroup);       // レーダーチャート用グループ
+  productGroup = new THREE.Group(); modelGroup.add(productGroup);
+
+  pivot.position.y = VIEW_OFFSET_Y;
 
   A = new THREE.Vector3(-0.5, -Math.sqrt(3) / 6, 0);
   B = new THREE.Vector3(0.5, -Math.sqrt(3) / 6, 0);
   C = new THREE.Vector3(0, Math.sqrt(3) / 3, 0);
   D = new THREE.Vector3(0, 0, H);
   G = new THREE.Vector3().add(A).add(B).add(C).add(D).multiplyScalar(0.25);
-  BASE_CENTER = new THREE.Vector3(0, 0, 0); // ★ centroid at origin
-  XY_CENTER = BASE_CENTER.clone(); // (0,0,0)
+  BASE_CENTER = new THREE.Vector3(0, 0, 0);
+  XY_CENTER = BASE_CENTER.clone();
 
   buildTetraWire();
   buildLabels();
 
-  productGroup = new THREE.Group(); modelGroup.add(productGroup);
-
-  /* 底面重心を原点へ (X,Y) */
-  // ★ centroid transform: shift not needed anymore
-
   camera.position.copy(new THREE.Vector3(2.2, 1.9, 2.6).normalize().multiplyScalar(3.5 * SCALE_FACTOR));
-  /* ★ OrbitControls のターゲットを底面重心（ワールド座標 (0,VIEW_OFFSET_Y,0)）へ */
   controls.target.set(0, VIEW_OFFSET_Y, 0);
   controls.update();
   animate();
@@ -103,6 +100,7 @@ function buildTetraWire() {
     modelGroup.add(new THREE.Line(g, matGrid));
   }
 }
+
 function makeTextSprite(txt) {
   const cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'), fs = 64;
   ctx.font = 'bold ' + fs + 'px sans-serif'; const w = ctx.measureText(txt).width;
@@ -112,12 +110,13 @@ function makeTextSprite(txt) {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
   const scale = 0.35; sp.scale.set(scale * cvs.width / cvs.height, scale, 1); return sp;
 }
+
 function buildLabels() {
   modelGroup.add(
     (() => { const s = makeTextSprite('AFKステージ'); s.position.copy(A).add(new THREE.Vector3(-0.12, -0.04, 0)); return s; })(),
-    (() => { const s = makeTextSprite('PVP'); s.position.copy(C).add(new THREE.Vector3(0, 0.06, 0)); return s; })(),
-    (() => { const s = makeTextSprite('幻影の域'); s.position.copy(B).add(new THREE.Vector3(0.12, 0, 0)); return s; })(),
-    (() => { const s = makeTextSprite('総合'); s.position.copy(D).add(new THREE.Vector3(0, 0.12, 0.02)); return s; })()
+    (() => { const s = makeTextSprite('PVP');       s.position.copy(C).add(new THREE.Vector3(0, 0.06, 0)); return s; })(),
+    (() => { const s = makeTextSprite('幻影の域');   s.position.copy(B).add(new THREE.Vector3(0.12, 0, 0)); return s; })(),
+    (() => { const s = makeTextSprite('総合');       s.position.copy(D).add(new THREE.Vector3(0, 0.12, 0.02)); return s; })()
   );
 }
 
@@ -136,6 +135,7 @@ function computeInwardFacePlanes() {
   });
   return FACE_PLANES;
 }
+
 function clampSpritesInsideTetra(sprites) {
   if (!sprites.length) return;
   const planes = computeInwardFacePlanes();
@@ -144,11 +144,7 @@ function clampSpritesInsideTetra(sprites) {
     let moved = false;
     for (const s of sprites) {
       if (s.userData && s.userData.isTopSum15) continue;
-      const worldPos = new THREE.Vector3(
-        s.position.x,
-        s.position.y,
-        s.position.z
-      ); // ★ centroid coords
+      const worldPos = new THREE.Vector3(s.position.x, s.position.y, s.position.z);
       for (const { n, d } of planes) {
         const dist = n.dot(worldPos) + d;
         if (dist < targetDist) {
@@ -157,8 +153,8 @@ function clampSpritesInsideTetra(sprites) {
         }
       }
       if (moved) {
-        s.position.x = worldPos.x; // ★ centroid coords
-        s.position.y = worldPos.y; // ★ centroid coords
+        s.position.x = worldPos.x;
+        s.position.y = worldPos.y;
       }
     }
     if (!moved) break;
@@ -185,7 +181,7 @@ function getSumZ(sum) {
   return t * H;
 }
 
-/* ==== スケール ==== */
+/* ==== スケール & 衝突回避 ==== */
 function computeDynamicScale(arr) {
   if (!arr.length) return 1;
   let rMax = 0;
@@ -244,7 +240,6 @@ function applyRadialLayoutBySum(sprites, finalScale) {
     const r_in_level = r_in_base * (1 - t_effective);
     let r = Math.max(0, r_in_level - spriteR * RAD_MARGIN_COEFF);
 
-    /* ★ 重複時は最低半径を確保しリング配置を保証 */
     if (list.length > 1) {
       const minR = spriteR * MIN_RING_RADIUS_FACTOR;
       if (r < minR) r = minR;
@@ -275,10 +270,9 @@ function applyRadialLayoutBySum(sprites, finalScale) {
   });
 }
 
-/* ==== 重複リング配置 (境界内フィット版) ==== */
+/* ==== 重複リング配置 ==== */
 function applyDuplicateRingLayout(sprites, finalScale) {
   if (!sprites.length) return;
-  /* グループ化: AFK / PVP / DR / sum が全一致 */
   const groups = new Map();
   for (const s of sprites) {
     const p = s.userData.product;
@@ -286,12 +280,11 @@ function applyDuplicateRingLayout(sprites, finalScale) {
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(s);
   }
-  const spriteR = SPRITE_SCALE * finalScale;              // ワールド半径
-  const baseRingStep = spriteR * 1.10;                    // ★ 1リング間距離を縮小 (1.25→1.10)
-  const MAX_PER_RING = 12;                               // 1リング最大
-  const ANGLE_OFFSET_PER_RING = 0.18;                    // リング毎回転
-  const JITTER = spriteR * 0.01;                         // ★ 微揺らぎ低減 (0.07→0.04)
-  /* 三角形辺距離計算用（2D） */
+  const spriteR = SPRITE_SCALE * finalScale;
+  const baseRingStep = spriteR * 1.10;
+  const MAX_PER_RING = 12;
+  const ANGLE_OFFSET_PER_RING = 0.18;
+  const JITTER = spriteR * 0.01;
   const tri = [A, B, C];
   function minEdgeDistance(x, y) {
     let minD = Infinity;
@@ -308,33 +301,27 @@ function applyDuplicateRingLayout(sprites, finalScale) {
   groups.forEach(list => {
     if (list.length < 2) return;
     const isSum15 = list[0].userData.product.sum === 15;
-    const startIndex = isSum15 ? 1 : 0;         // TOP は既に頂点固定
+    const startIndex = isSum15 ? 1 : 0;
     if (startIndex >= list.length) return;
-    /* 中心 (平均) */
     let cx = 0, cy = 0;
     list.forEach(s => { cx += s.position.x; cy += s.position.y; });
     cx /= list.length; cy /= list.length;
-    const rMaxAllowed = minEdgeDistance(cx, cy) - spriteR * 1.2; // 辺内最大許容
+    const rMaxAllowed = minEdgeDistance(cx, cy) - spriteR * 1.2;
     const dupCount = list.length - startIndex;
-    /* 配置 */
     for (let k = 0; k < dupCount; k++) {
       const s = list[startIndex + k];
-      const ringLevel = Math.floor(k / MAX_PER_RING);           // 0,1,...
+      const ringLevel = Math.floor(k / MAX_PER_RING);
       const indexInRing = k % MAX_PER_RING;
       const remaining = dupCount - ringLevel * MAX_PER_RING;
       const thisRingCount = Math.min(MAX_PER_RING, remaining);
-      /* 希望半径 */
-      let desired = baseRingStep * (1 + ringLevel * 1.05);      // ★ 拡散係数も僅かに縮小 (1.10→1.05)
-      /* 角間隔から衝突しない最小半径 (n 個を円周) r >= d/(2 sin(pi/n))  */
+      let desired = baseRingStep * (1 + ringLevel * 1.05);
       const dSprite = spriteR * 2 * 1.05;
       const n = thisRingCount;
       const rMinFromPacking = (n > 1) ? (dSprite / (2 * Math.sin(Math.PI / n))) : 0;
       if (desired < rMinFromPacking) desired = rMinFromPacking;
-      /* 上限でクリップ */
       let r = Math.min(desired, rMaxAllowed > 0 ? rMaxAllowed : desired);
       if (r < spriteR * 0.25) {
-        /* ほぼ余地なし: 中心近傍微分散 */
-        const theta = (2 * Math.PI * (indexInRing + 0.5) / (thisRingCount)) + ringLevel * ANGLE_OFFSET_PER_RING;
+        const theta = (2 * Math.PI * (indexInRing + 0.5) / thisRingCount) + ringLevel * ANGLE_OFFSET_PER_RING;
         r = spriteR * 0.28;
         s.position.x = cx + r * Math.cos(theta) + (Math.random() * 2 - 1) * JITTER;
         s.position.y = cy + r * Math.sin(theta) + (Math.random() * 2 - 1) * JITTER;
@@ -345,7 +332,6 @@ function applyDuplicateRingLayout(sprites, finalScale) {
       s.position.y = cy + r * Math.sin(angle) + (Math.random() * 2 - 1) * JITTER;
     }
   });
-  /* 原位置（重み三角内部）へのソフト引き戻し */
   for (const s of sprites) {
     if (s.userData && s.userData.isTopSum15) continue;
     const bp = basePoint(s.userData.product);
@@ -356,7 +342,7 @@ function applyDuplicateRingLayout(sprites, finalScale) {
 
 /* ==== 頂点配置 ==== */
 function placeTopSprite(sprite) {
-  const vTop = new THREE.Vector3(D.x, D.y, H); // ★ already centered at centroid
+  const vTop = new THREE.Vector3(D.x, D.y, H);
   sprite.position.copy(vTop);
   sprite.userData.isTopSum15 = true;
   if (TOP_SPRITE_ALIGN === 'bottom') {
@@ -415,6 +401,59 @@ function updateRangeDisplays() {
   setVal('vDrMin', fDrMin);   setVal('vDrMax', fDrMax);
 }
 
+/**
+ * 三角形レーダーチャートを重ね描き
+ * MIN=1 が2つ以上ある場合は擬似的に 1.5 として微小三角形を描画
+ */
+function addRadarTriangles(list) {
+  // 既存チャートをクリア
+  while (chartGroup.children.length) {
+    chartGroup.remove(chartGroup.children[0]);
+  }
+
+  list.forEach(p => {
+    // 元スコア取得
+    let a = p.afkstage;
+    let b = p.DreamRealm;
+    let c = p.PVP;
+
+    // MIN(1) の個数をカウント
+    const onesCount = [a, b, c].filter(v => v === MIN).length;
+
+    // 1が2つ以上なら該当値を1.5に補正
+    if (onesCount >= 2) {
+      if (a === MIN) a = MIN + 0.5;
+      if (b === MIN) b = MIN + 0.5;
+      if (c === MIN) c = MIN + 0.5;
+    }
+
+    // 正規化
+    const r_afk = (a - MIN) / (MAX - MIN);
+    const r_dr  = (b - MIN) / (MAX - MIN);
+    const r_pvp = (c - MIN) / (MAX - MIN);
+
+    // 頂点ベクトル
+    const vA = A.clone().multiplyScalar(r_afk);
+    const vB = B.clone().multiplyScalar(r_dr);
+    const vC = C.clone().multiplyScalar(r_pvp);
+
+    // ジオメトリ＋マテリアル
+    const geom = new THREE.BufferGeometry().setFromPoints([vA, vB, vC]);
+    geom.setIndex([0, 1, 2]);
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0x66ccff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.5,
+    });
+
+    // メッシュを追加
+    const mesh = new THREE.Mesh(geom, mat);
+    chartGroup.add(mesh);
+  });
+}
+
+
 /* ==== 再構築 ==== */
 const palette = ['#ff00ff', '#ff33ff', '#ff66ff', '#ff00cc', '#ff1493', '#ff55aa', '#ff99dd', '#cc44ff', '#ff22aa', '#ffaaee'];
 let lastBaseScale = SCALE_FACTOR, lastCollisionExpand = 1;
@@ -423,30 +462,31 @@ function rebuild() {
     if (!productGroup) return;
     while (productGroup.children.length) productGroup.remove(productGroup.children[0]);
     dataTableBody.innerHTML = '';
-    const disp = +displayCountEl.value;
+    const disp   = +displayCountEl.value;
     const subset = FULL_DATA.slice(0, disp);
     const filter = getFilter();
     const filtered = subset.filter(p => passFilter(p, filter));
     filtered.forEach(p => p.sum = p.afkstage + p.PVP + p.DreamRealm);
+
     if (sortState.key) {
       const k = sortState.key, d = sortState.dir;
       filtered.sort((a, b) => (a[k] - b[k]) * d);
     }
-    const dyn = computeDynamicScale(filtered);
-    const baseScale = SCALE_FACTOR * dyn;
-    const collisionExpand = computeCollisionExpand(filtered, baseScale * GEOM_SCALE);
+
+    const dyn            = computeDynamicScale(filtered);
+    const baseScale      = SCALE_FACTOR * dyn;
+    const collisionExpand= computeCollisionExpand(filtered, baseScale * GEOM_SCALE);
     lastBaseScale = baseScale; lastCollisionExpand = collisionExpand;
-    const finalScale = baseScale * GEOM_SCALE * collisionExpand;
+    const finalScale     = baseScale * GEOM_SCALE * collisionExpand;
     pivot.scale.set(finalScale, finalScale, finalScale);
     camera.position.copy(new THREE.Vector3(2.2, 1.9, 2.6).normalize().multiplyScalar(3.5 * finalScale));
-    /* ★ 再計算後もターゲット維持 */
     controls.target.set(0, VIEW_OFFSET_Y, 0);
     controls.update();
 
     const sprites = [];
     filtered.forEach((p, i) => {
       const bp = basePoint(p);
-      const z = getSumZ(p.sum);
+      const z  = getSumZ(p.sum);
       let sprite;
       if (p.image) {
         const loader = new THREE.TextureLoader();
@@ -461,7 +501,7 @@ function rebuild() {
         ctx.fillText(p.name.slice(-2), size / 2, size / 2);
         sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cvs), transparent: true }));
       }
-      sprite.position.set(bp.x, bp.y, z); // ★ already centered at centroid
+      sprite.position.set(bp.x, bp.y, z);
       sprite.scale.set(SPRITE_SCALE, SPRITE_SCALE, SPRITE_SCALE);
       sprite.userData.product = p;
       productGroup.add(sprite);
@@ -470,10 +510,18 @@ function rebuild() {
       const factionLabel = FACTION_LABEL[p.faction] ?? ('F' + p.faction);
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${highlight(p.name, filter.nameQuery)}</td>
-                    <td>${escapeHtml(factionLabel)}</td>
-                    <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
+                      <td>${escapeHtml(factionLabel)}</td>
+                      <td>${p.afkstage}</td><td>${p.PVP}</td><td>${p.DreamRealm}</td><td>${p.sum}</td>`;
       dataTableBody.appendChild(tr);
     });
+
+    // レーダーチャートは「名前検索が有効かつ結果が1件」のときのみ表示
+    while (chartGroup.children.length) {
+      chartGroup.remove(chartGroup.children[0]);
+    }
+    if (filter.nameQuery && filtered.length === 1) {
+      addRadarTriangles(filtered);
+    }
 
     applyRadialLayoutBySum(sprites, finalScale);
     applyDuplicateRingLayout(sprites, finalScale);
@@ -504,6 +552,7 @@ function rebuild() {
     loadStatus.classList.add('status-error');
   }
 }
+
 function rebuildEmpty() {
   dynScaleVal.textContent = '1.000';
   collisionScaleVal.textContent = 'col 1.000';
@@ -549,17 +598,7 @@ document.querySelectorAll('#dataTable thead th[data-sort-key]').forEach(th=>{
 displayCountEl.addEventListener('input',rebuild);
 displayCountEl.addEventListener('change',rebuild);
 [fAfkMin,fAfkMax,fPvpMin,fPvpMax,fDrMin,fDrMax].forEach(inp=>{
-  const handler=()=>{
-    const id=inp.id;
-    if(id.endsWith('Min')){
-      const maxEl=document.getElementById(id.replace('Min','Max'));
-      if(+inp.value>+maxEl.value) maxEl.value=inp.value;
-    } else {
-      const minEl=document.getElementById(id.replace('Max','Min'));
-      if(+inp.value<+minEl.value) minEl.value=inp.value;
-    }
-    updateRangeDisplays(); rebuild();
-  };
+  const handler=()=>{ /* 範囲制御 */ updateRangeDisplays(); rebuild(); };
   inp.addEventListener('input',handler);
   inp.addEventListener('change',handler);
 });
@@ -584,7 +623,6 @@ fName.addEventListener('input',()=>{
 });
 function toggleList(){
   let listExpanded=bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
-  listExpanded=!listExpanded;
   bottomPanel.style.height=(listExpanded?EXPANDED_HEIGHT:COLLAPSED_HEIGHT)+'px';
   toggleListBtn.textContent=listExpanded?'一覧▼':'一覧▲';
   setTimeout(resizeRenderer,260);
