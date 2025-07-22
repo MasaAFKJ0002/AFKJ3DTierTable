@@ -731,8 +731,8 @@
   {
     "name": "ルーシー",
     "afkstage": 5,
-    "PVP": 1,
-    "DreamRealm": 1,
+    "PVP": 5,
+    "DreamRealm": 5,
     "faction": 7,
     "image": "images/Lucy.PNG",
     "meta": { "role": "TEST" }

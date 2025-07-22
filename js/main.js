@@ -95,6 +95,7 @@ function initThree() {
   XY_CENTER   = BASE_CENTER.clone();
 
   buildTetraWire();
+  buildAltitudeLine();
   buildLabels();
 
   // 軸線＋ラベル描画
@@ -137,6 +138,25 @@ function buildTetraWire() {
     modelGroup.add(new THREE.Line(g, matGrid));
   }
 }
+
+/* ==== 頂点Dから底面ABCへの垂線 ==== */
+function buildAltitudeLine() {
+  // 面ABCの法線ベクトルを計算
+  const normal = new THREE.Vector3()
+    .crossVectors(B.clone().sub(A), C.clone().sub(A))
+    .normalize();
+  // D から面ABCへの距離をプロジェクション
+  const diff = D.clone().sub(A);
+  const dist = diff.dot(normal);
+  const foot = D.clone().sub(normal.clone().multiplyScalar(dist));
+  // 線分を描画
+  const geometry = new THREE.BufferGeometry().setFromPoints([D, foot]);
+  const material = new THREE.LineDashedMaterial({ color: 0xffff00, dashSize: 0.05, gapSize: 0.05 });
+  const line = new THREE.Line(geometry, material);
+  line.computeLineDistances();
+  modelGroup.add(line);
+}
+
 
 /* ==== スプライト文字列 ==== */
 function makeTextSprite(txt) {
@@ -304,21 +324,17 @@ function clampSpritesInsideTetra(sprites){
 /* ==== 位置計算 ==== */
 function norm(v){return (v-MIN)/(MAX-MIN);}
 function basePoint(p){
-  let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
-  let s=wa+wb+wc;
-  if(s===0) return new THREE.Vector3(0,0,0);
-  wa/=s; wb/=s; wc/=s;
-  const floor=MIN_WEIGHT_BASE;
-  if(wa<floor||wb<floor||wc<floor){
-    wa=Math.max(wa,floor);
-    wb=Math.max(wb,floor);
-    wc=Math.max(wc,floor);
-    const s2=wa+wb+wc; wa/=s2; wb/=s2; wc/=s2;
-  }
-  return new THREE.Vector3()
-    .addScaledVector(A,wa)
-    .addScaledVector(B,wb)
-    .addScaledVector(C,wc);
+  // 点D（頂点 総合）を平面ABCに垂直投影
+  const normal = new THREE.Vector3().subVectors(B, A)
+    .cross(new THREE.Vector3().subVectors(C, A))
+    .normalize();
+  // AからDへのベクトル
+  const AD = new THREE.Vector3().subVectors(D, A);
+  // 平面からの距離
+  const distance = AD.dot(normal);
+  // Dを平面に垂直投影
+  return new THREE.Vector3().copy(D)
+    .sub(normal.clone().multiplyScalar(distance));
 }
 function getSumZ(sum){
   let t=(sum-SUM_MIN_REAL)/(SUM_MAX_REAL-SUM_MIN_REAL);
@@ -368,8 +384,16 @@ function applyRadialLayoutBySum(sprites,finalScale){
     groups.get(sum).push(s);
   });
   const r_base=1/(2*Math.sqrt(3)), spriteR=SPRITE_SCALE*finalScale;
-  groups.forEach((list,sum)=>{
-    let t=(sum-SUM_MIN_REAL)/(SUM_MAX_REAL-SUM_MIN_REAL);
+  groups.forEach((list, sum) => {
+    // 同一総合値で該当ヒーローが一体のみなら放射状配置をスキップ
+    if (list.length === 1) {
+      const sumVal = sum;
+      const t = Math.max(0, Math.min(1, (sumVal - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL)));
+      const centerPos = foot.clone().lerp(D, t); // 垂線上から放射配置
+      list[0].position.copy(centerPos);
+      return;
+    }
+let t=(sum-SUM_MIN_REAL)/(SUM_MAX_REAL-SUM_MIN_REAL);
     t=Math.max(0,Math.min(1,t));
     const multiTop=(t===1 && list.length>1);
     list.sort((a,b)=>a.userData.product.name.localeCompare(b.userData.product.name,'ja'));
@@ -462,7 +486,7 @@ function placeTopSprite(sprite){
   const vTop=new THREE.Vector3(D.x,D.y,H);
   sprite.position.copy(vTop);
   sprite.userData.isTopSum15=true;
-  if(TOP_SPRITE_ALIGN==='bottom') sprite.center.set(0.5,0);
+  if(TOP_SPRITE_ALIGN==='bottom') sprite.center.set(0.5,0.5);
   else                             sprite.center.set(0.5,0.5);
 }
 function finalizeTopSpritePositions(){
@@ -473,53 +497,100 @@ function finalizeTopSpritePositions(){
 }
 
 
-/* ==== 垂線上+放射状レイアウト: BASE_CENTER→D軸に沿って配置+放射状配置 ==== */
-function applyPerpendicularLayout(sprites, finalScale) {
+
+/**
+ * 総合値ごとにヒーローをベースの高さから垂直積み上げ配置
+ */
+function applyVerticalStackLayout(sprites, finalScale) {
   if (!sprites.length) return;
-  // 垂線方向ベクトル
-  const axis = new THREE.Vector3().subVectors(D, BASE_CENTER).normalize();
-  // 直交ベクトル取得
-  const arbitrary = Math.abs(axis.dot(new THREE.Vector3(0,1,0))) < 0.9
-    ? new THREE.Vector3(0,1,0)
-    : new THREE.Vector3(1,0,0);
-  const u = new THREE.Vector3().crossVectors(axis, arbitrary).normalize();
-  const v = new THREE.Vector3().crossVectors(axis, u).normalize();
-  // グループ化 by sum
   const groups = new Map();
   sprites.forEach(s => {
     const sum = s.userData.product.sum;
     if (!groups.has(sum)) groups.set(sum, []);
     groups.get(sum).push(s);
   });
-  const r_base = 1/(2*Math.sqrt(3));
-  const spriteR = SPRITE_SCALE * finalScale;
+  const stepZ = SPRITE_SCALE * finalScale * SPACING_FACTOR;
   groups.forEach((list, sum) => {
+    const t = Math.max(0, Math.min(1, (sum - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL)));
+    const basePos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
+    list.sort((a, b) => a.userData.product.name.localeCompare(b.userData.product.name, 'ja'));
+    list.forEach((s, i) => {
+
+   // スプライトのアンカーを足元に設定
+    s.center.set(0.5, 0);
+ // 足元を垂直ライン上に
+     s.position.set(basePos.x, basePos.y, basePos.z + i * stepZ);
+    });
+  });
+}
+
+/* ==== 垂線上+放射状レイアウト: BASE_CENTER→D軸に沿って配置+放射状配置 ==== */
+function applyPerpendicularLayout(sprites, finalScale) {
+  if (!sprites.length) return;
+
+    // 名前検索で唯一１体に絞られたときのみ、軸上配置して radial をスキップ
+  if (nameInputMode && sprites.length === 1) {
+    const s = sprites[0];
+    const sum = s.userData.product.sum;
     let t = (sum - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL);
     t = Math.max(0, Math.min(1, t));
+    const pos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
+    s.position.copy(pos);
+    return;
+  }
+
+
+  // 軸方向ベクトル
+  const axis = new THREE.Vector3().subVectors(D, BASE_CENTER).normalize();
+  // 垂直方向ベクトル
+  const arbitrary = Math.abs(axis.dot(new THREE.Vector3(0,1,0))) < 0.9
+    ? new THREE.Vector3(0,1,0)
+    : new THREE.Vector3(1,0,0);
+  const u = new THREE.Vector3().crossVectors(axis, arbitrary).normalize();
+  const v = new THREE.Vector3().crossVectors(axis, u).normalize();
+
+  // 合計値でグループ化
+  const groups = new Map();
+  sprites.forEach(s => {
+    const sum = s.userData.product.sum;
+    if (!groups.has(sum)) groups.set(sum, []);
+    groups.get(sum).push(s);
+  });
+
+  const r_base = 1/(2*Math.sqrt(3));
+  const spriteR = SPRITE_SCALE * finalScale;
+
+  groups.forEach((list, sum) => {
+    // 線上配置の割合
+    let t = (sum - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL);
+    t = Math.max(0, Math.min(1, t));
+    // ソロモード: 一体のみなら垂線上配置
+    if (list.length === 1) {
+    const z = t * H;
+    const sprite = list[0];
+    // 【ここで】pivotを“見た目中心”に合わせる
+    sprite.center.set(0.497, 0.5); // or 0.9,1.2 など、実際にアイコンで“見た目”が合う値]
+    sprite.position.copy(foot);
+      return;
+    }
+    // 複数体: 放射状配置
     const multiTop = (t === 1 && list.length > 1);
-    // 名前順でソート
-    list.sort((a,b)=>a.userData.product.name.localeCompare(b.userData.product.name,'ja'));
+    list.sort((a, b) => a.userData.product.name.localeCompare(b.userData.product.name, 'ja'));
     const t_eff = multiTop ? SUM15_EPS_T : t;
     let r = r_base * (1 - t_eff) - spriteR * RAD_MARGIN_COEFF;
-    if (list.length > 1) {
-      const minR = spriteR * MIN_RING_RADIUS_FACTOR;
-      r = Math.max(r, minR);
-    }
-    list.forEach((s,i) => {
+    const minR = spriteR * MIN_RING_RADIUS_FACTOR;
+    if (list.length > 1) r = Math.max(r, minR);
+    // 中心点
+    const centerPos = foot.clone().lerp(D, t); // 垂線上から放射配置
+    list.forEach((s, i) => {
       if (multiTop && i === 0) { placeTopSprite(s); return; }
-      const centerPos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
-      if (list.length === 1) {
-        if (t === 1) placeTopSprite(s);
-        else s.position.copy(centerPos);
-      } else {
-        const idx = multiTop ? (i - 1) : i;
-        const count = multiTop ? (list.length - 1) : list.length;
-        const angle = 2 * Math.PI * idx / count;
-        const offset = u.clone().multiplyScalar(r * Math.cos(angle))
-          .add(v.clone().multiplyScalar(r * Math.sin(angle)));
-        const finalPos = centerPos.clone().add(offset);
-        s.position.copy(finalPos);
-      }
+      const idx = multiTop ? (i - 1) : i;
+      const count = multiTop ? (list.length - 1) : list.length;
+      const angle = 2 * Math.PI * idx / count;
+      const offset = u.clone().multiplyScalar(r * Math.cos(angle))
+        .add(v.clone().multiplyScalar(r * Math.sin(angle)));
+      const finalPos = centerPos.clone().add(offset);
+      s.position.copy(finalPos);
     });
   });
 }
@@ -615,7 +686,30 @@ function rebuild(){
       let sprite;
       if(p.image){
         const loader=new THREE.TextureLoader();
-        const tex=loader.load(p.image);
+        const tex=loader.load(p.image, (texture) => {
+          const img = texture.image;
+          const W = img.width, H = img.height;
+          const canvas = document.createElement('canvas');
+          canvas.width = W; canvas.height = H;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const { data } = ctx.getImageData(0, 0, W, H);
+          let minX = W, minY = H, maxX = 0, maxY = 0;
+          for (let y = 0; y < H; y++) {
+            for (let x = 0; x < W; x++) {
+              if (data[(y * W + x) * 4 + 3] > 0) {
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
+              }
+            }
+          }
+          const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+            sprite.center.set(cx / W, cy / H);
+            sprite.material.center.set(cx / W, cy / H);
+          sprite.material.needsUpdate = true;
+        });
         sprite=new THREE.Sprite(new THREE.SpriteMaterial({ map:tex,transparent:true }));
       } else {
         const size=256,cvs=document.createElement('canvas'); cvs.width=cvs.height=size;
@@ -628,7 +722,7 @@ function rebuild(){
         sprite=new THREE.Sprite(new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(cvs),transparent:true }));
       }
       sprite.position.set(bp.x,bp.y,z);
-      sprite.scale.set(SPRITE_SCALE,SPRITE_SCALE,SPRITE_SCALE);
+      sprite.scale.set(SPRITE_SCALE * (IMG_W / IMG_H), SPRITE_SCALE, SPRITE_SCALE);
       sprite.userData.product=p;
       productGroup.add(sprite);
       sprites.push(sprite);
@@ -654,7 +748,11 @@ function rebuild(){
 
     // レイアウト
     // レイアウト: 垂線レイアウトのみ
-    applyPerpendicularLayout(sprites, finalScale);
+    if (useVerticalStack) {
+      applyVerticalStackLayout(sprites, finalScale);
+    } else {
+      applyPerpendicularLayout(sprites, finalScale);
+    }
     // クランプ: スプライトをテトラ内部に収める
     clampSpritesInsideTetra(sprites);
 
@@ -749,11 +847,14 @@ btnFilterReset.addEventListener('click',()=>{
   rebuild();
 });
 btnRebuild.addEventListener('click',rebuild);
-let nameDebTimer=null;
-fName.addEventListener('input',()=>{
-  if(nameDebTimer) clearTimeout(nameDebTimer);
-  if(fName.value.trim()!=='') allRadio.checked=true;
-  nameDebTimer=setTimeout(()=>rebuild(),90);
+let nameDebTimer = null;
+let nameInputMode = false;
+let useVerticalStack = false; // false: radial layout, true: vertical stack layout
+fName.addEventListener('input', () => {
+    nameInputMode = fName.value.trim() !== '';
+    if (nameDebTimer) clearTimeout(nameDebTimer);
+    if (nameInputMode) allRadio.checked = true;
+    nameDebTimer = setTimeout(() => rebuild(), 90);
 });
 function toggleList(){
   const expanded=bottomPanel.style.height!==COLLAPSED_HEIGHT+'px';
