@@ -324,17 +324,21 @@ function clampSpritesInsideTetra(sprites){
 /* ==== 位置計算 ==== */
 function norm(v){return (v-MIN)/(MAX-MIN);}
 function basePoint(p){
-  // 点D（頂点 総合）を平面ABCに垂直投影
-  const normal = new THREE.Vector3().subVectors(B, A)
-    .cross(new THREE.Vector3().subVectors(C, A))
-    .normalize();
-  // AからDへのベクトル
-  const AD = new THREE.Vector3().subVectors(D, A);
-  // 平面からの距離
-  const distance = AD.dot(normal);
-  // Dを平面に垂直投影
-  return new THREE.Vector3().copy(D)
-    .sub(normal.clone().multiplyScalar(distance));
+  let wa=norm(p.afkstage), wb=norm(p.PVP), wc=norm(p.DreamRealm);
+  let s=wa+wb+wc;
+  if(s===0) return new THREE.Vector3(0,0,0);
+  wa/=s; wb/=s; wc/=s;
+  const floor=MIN_WEIGHT_BASE;
+  if(wa<floor||wb<floor||wc<floor){
+    wa=Math.max(wa,floor);
+    wb=Math.max(wb,floor);
+    wc=Math.max(wc,floor);
+    const s2=wa+wb+wc; wa/=s2; wb/=s2; wc/=s2;
+  }
+  return new THREE.Vector3()
+    .addScaledVector(A,wa)
+    .addScaledVector(B,wb)
+    .addScaledVector(C,wc);
 }
 function getSumZ(sum){
   let t=(sum-SUM_MIN_REAL)/(SUM_MAX_REAL-SUM_MIN_REAL);
@@ -389,7 +393,7 @@ function applyRadialLayoutBySum(sprites,finalScale){
     if (list.length === 1) {
       const sumVal = sum;
       const t = Math.max(0, Math.min(1, (sumVal - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL)));
-      const centerPos = foot.clone().lerp(D, t); // 垂線上から放射配置
+      const centerPos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
       list[0].position.copy(centerPos);
       return;
     }
@@ -536,6 +540,7 @@ function applyPerpendicularLayout(sprites, finalScale) {
     t = Math.max(0, Math.min(1, t));
     const pos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
     s.position.copy(pos);
+     sprite.userData.isTopSum15 = true;
     return;
   }
 
@@ -569,8 +574,13 @@ function applyPerpendicularLayout(sprites, finalScale) {
     const z = t * H;
     const sprite = list[0];
     // 【ここで】pivotを“見た目中心”に合わせる
-    sprite.center.set(0.497, 0.5); // or 0.9,1.2 など、実際にアイコンで“見た目”が合う値]
-    sprite.position.copy(foot);
+    sprite.center.set(0.5, 0.5); // or 0.9,1.2 など、実際にアイコンで“見た目”が合う値]
+    sprite.position.set(
+      BASE_CENTER.x,  // = 0
+      BASE_CENTER.y,  // = 0
+      z
+    );
+    sprite.userData.isTopSum15 = true;
       return;
     }
     // 複数体: 放射状配置
@@ -581,7 +591,7 @@ function applyPerpendicularLayout(sprites, finalScale) {
     const minR = spriteR * MIN_RING_RADIUS_FACTOR;
     if (list.length > 1) r = Math.max(r, minR);
     // 中心点
-    const centerPos = foot.clone().lerp(D, t); // 垂線上から放射配置
+    const centerPos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
     list.forEach((s, i) => {
       if (multiTop && i === 0) { placeTopSprite(s); return; }
       const idx = multiTop ? (i - 1) : i;
@@ -706,8 +716,7 @@ function rebuild(){
             }
           }
           const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-            sprite.center.set(cx / W, cy / H);
-            sprite.material.center.set(cx / W, cy / H);
+          sprite.material.center.set(cx / W, cy / H);
           sprite.material.needsUpdate = true;
         });
         sprite=new THREE.Sprite(new THREE.SpriteMaterial({ map:tex,transparent:true }));
@@ -722,7 +731,7 @@ function rebuild(){
         sprite=new THREE.Sprite(new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(cvs),transparent:true }));
       }
       sprite.position.set(bp.x,bp.y,z);
-      sprite.scale.set(SPRITE_SCALE * (IMG_W / IMG_H), SPRITE_SCALE, SPRITE_SCALE);
+      sprite.scale.set(SPRITE_SCALE,SPRITE_SCALE,SPRITE_SCALE);
       sprite.userData.product=p;
       productGroup.add(sprite);
       sprites.push(sprite);
@@ -901,8 +910,8 @@ addEventListener('mousemove', e=>{
 /* ==== キー回転 ==== */
 addEventListener('keydown', e=>{
   if(!pivot) return;
-  if(e.code==='KeyQ') pivot.rotation.z+=0.05;
-  if(e.code==='KeyE') pivot.rotation.z-=0.05;
+  if(e.code==='KeyQ') pivot.rotation.z+=0;
+  if(e.code==='KeyE') pivot.rotation.z-=0;
 });
 
 /* ==== リサイズ ==== */
