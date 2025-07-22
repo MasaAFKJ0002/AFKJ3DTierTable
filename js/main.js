@@ -687,9 +687,9 @@ displayCountEl.addEventListener('change',rebuild);
 factionRadios.forEach(r=>r.addEventListener('change',rebuild));
 btnFilterReset.addEventListener('click',()=>{
   fName.value='';
-  fAfkMin.value=2; fAfkMax.value=5;
-  fPvpMin.value=2; fPvpMax.value=5;
-  fDrMin.value=2;  fDrMax.value=5;
+  fAfkMin.value=1; fAfkMax.value=5;
+  fPvpMin.value=1; fPvpMax.value=5;
+  fDrMin.value=1;  fDrMax.value=5;
   allRadio.checked=true;
   sortState={key:null,dir:1};
   GEOM_SCALE=INITIAL_GEOM_SCALE;
