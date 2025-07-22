@@ -172,7 +172,7 @@
   },
   {
     "name": "ブルータス",
-    "afkstage": 4,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -181,7 +181,7 @@
   },
   {
     "name": "ガルダ",
-    "afkstage": 3,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 1,
     "faction": 2,
@@ -190,7 +190,7 @@
   },
   {
     "name": "ココ",
-    "afkstage": 3,
+    "afkstage": 2,
     "PVP": 3,
     "DreamRealm": 1,
     "faction": 2,
@@ -262,7 +262,7 @@
   },
   {
     "name": "シャキール",
-    "afkstage": 2,
+    "afkstage": 1,
     "PVP": 3,
     "DreamRealm": 2,
     "faction": 2,
@@ -271,7 +271,7 @@
   },
   {
     "name": "アクン_モンモン",
-    "afkstage": 3,
+    "afkstage": 2,
     "PVP": 1,
     "DreamRealm": 3,
     "faction": 2,
@@ -317,7 +317,7 @@
   {
     "name": "エルロン",
     "afkstage": 5,
-    "PVP": 5,
+    "PVP": 4,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Eironn.PNG",
@@ -443,7 +443,7 @@
   {
     "name": "アルマス",
     "afkstage": 5,
-    "PVP": 5,
+    "PVP": 4,
     "DreamRealm": 1,
     "faction": 3,
     "image": "images/Ulmus.PNG",
@@ -541,7 +541,7 @@
   },
   {
     "name": "ニル",
-    "afkstage": 5,
+    "afkstage": 4,
     "PVP": 5,
     "DreamRealm": 1,
     "faction": 4,
@@ -560,7 +560,7 @@
   {
     "name": "シェミーラ",
     "afkstage": 1,
-    "PVP": 5,
+    "PVP": 4,
     "DreamRealm": 5,
     "faction": 4,
     "image": "images/Shemira.PNG",
@@ -705,7 +705,7 @@
     "name": "プルースト",
     "afkstage": 1,
     "PVP": 4,
-    "DreamRealm": 5,
+    "DreamRealm": 4,
     "faction": 6,
     "image": "images/Phraesto.PNG",
     "meta": { "role": "TEST" }
@@ -714,7 +714,7 @@
     "name": "エニエ",
     "afkstage": 1,
     "PVP": 1,
-    "DreamRealm": 3,
+    "DreamRealm": 4,
     "faction": 6,
     "image": "images/Reinier.PNG",
     "meta": { "role": "TEST" }
