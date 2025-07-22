@@ -472,6 +472,18 @@ function finalizeTopSpritePositions(){
   });
 }
 
+/* ==== 垂線レイアウト: BASE_CENTER→D 上に配置 ==== */
+function applyPerpendicularLayout(sprites) {
+  if (!sprites.length) return;
+  sprites.forEach(s => {
+    const sum = s.userData.product.sum;
+    let t = (sum - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL);
+    t = Math.max(0, Math.min(1, t));
+    const pos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
+    s.position.copy(pos);
+  });
+}
+
 /* ==== フィルタ/補助 ==== */
 function normalizeName(s){
   if(!s) return '';
@@ -601,10 +613,8 @@ function rebuild(){
     }
 
     // レイアウト
-    applyRadialLayoutBySum(sprites,finalScale);
-    applyDuplicateRingLayout(sprites,finalScale);
-    clampSpritesInsideTetra(sprites);
-    finalizeTopSpritePositions();
+    // レイアウト: 垂線レイアウトのみ
+    applyPerpendicularLayout(sprites);
 
     // 該当なし
     if(!filtered.length){
