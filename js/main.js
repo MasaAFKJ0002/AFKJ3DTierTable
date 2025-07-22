@@ -472,15 +472,55 @@ function finalizeTopSpritePositions(){
   });
 }
 
-/* ==== 垂線レイアウト: BASE_CENTER→D 上に配置 ==== */
-function applyPerpendicularLayout(sprites) {
+
+/* ==== 垂線上+放射状レイアウト: BASE_CENTER→D軸に沿って配置+放射状配置 ==== */
+function applyPerpendicularLayout(sprites, finalScale) {
   if (!sprites.length) return;
+  // 垂線方向ベクトル
+  const axis = new THREE.Vector3().subVectors(D, BASE_CENTER).normalize();
+  // 直交ベクトル取得
+  const arbitrary = Math.abs(axis.dot(new THREE.Vector3(0,1,0))) < 0.9
+    ? new THREE.Vector3(0,1,0)
+    : new THREE.Vector3(1,0,0);
+  const u = new THREE.Vector3().crossVectors(axis, arbitrary).normalize();
+  const v = new THREE.Vector3().crossVectors(axis, u).normalize();
+  // グループ化 by sum
+  const groups = new Map();
   sprites.forEach(s => {
     const sum = s.userData.product.sum;
+    if (!groups.has(sum)) groups.set(sum, []);
+    groups.get(sum).push(s);
+  });
+  const r_base = 1/(2*Math.sqrt(3));
+  const spriteR = SPRITE_SCALE * finalScale;
+  groups.forEach((list, sum) => {
     let t = (sum - SUM_MIN_REAL) / (SUM_MAX_REAL - SUM_MIN_REAL);
     t = Math.max(0, Math.min(1, t));
-    const pos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
-    s.position.copy(pos);
+    const multiTop = (t === 1 && list.length > 1);
+    // 名前順でソート
+    list.sort((a,b)=>a.userData.product.name.localeCompare(b.userData.product.name,'ja'));
+    const t_eff = multiTop ? SUM15_EPS_T : t;
+    let r = r_base * (1 - t_eff) - spriteR * RAD_MARGIN_COEFF;
+    if (list.length > 1) {
+      const minR = spriteR * MIN_RING_RADIUS_FACTOR;
+      r = Math.max(r, minR);
+    }
+    list.forEach((s,i) => {
+      if (multiTop && i === 0) { placeTopSprite(s); return; }
+      const centerPos = new THREE.Vector3().lerpVectors(BASE_CENTER, D, t);
+      if (list.length === 1) {
+        if (t === 1) placeTopSprite(s);
+        else s.position.copy(centerPos);
+      } else {
+        const idx = multiTop ? (i - 1) : i;
+        const count = multiTop ? (list.length - 1) : list.length;
+        const angle = 2 * Math.PI * idx / count;
+        const offset = u.clone().multiplyScalar(r * Math.cos(angle))
+          .add(v.clone().multiplyScalar(r * Math.sin(angle)));
+        const finalPos = centerPos.clone().add(offset);
+        s.position.copy(finalPos);
+      }
+    });
   });
 }
 
@@ -614,7 +654,9 @@ function rebuild(){
 
     // レイアウト
     // レイアウト: 垂線レイアウトのみ
-    applyPerpendicularLayout(sprites);
+    applyPerpendicularLayout(sprites, finalScale);
+    // クランプ: スプライトをテトラ内部に収める
+    clampSpritesInsideTetra(sprites);
 
     // 該当なし
     if(!filtered.length){
