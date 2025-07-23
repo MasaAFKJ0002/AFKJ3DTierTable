@@ -8,17 +8,17 @@ const FACTION_LABEL = {
   4: 'グレイヴボーン', 5: 'セレスチアル', 6: 'カタストロフ', 7: 'ボイド'
 };
 const COLLAPSED_HEIGHT = 110, EXPANDED_HEIGHT = 240, VIEW_OFFSET_Y = -0.9;
-const SCALE_FACTOR = 8, H = 1.2;
+const SCALE_FACTOR = 10, H = 1.2;
 const MIN = 1, MAX = 5, SAFETY = 1.05;
 const MIN_WEIGHT_BASE = SAFETY * SPRITE_SCALE / Math.sqrt(3);
 const MIN_DYN_SCALE = 0.6, MAX_DYN_SCALE = 2.2;
-const SAFETY_MARGIN = 1.05;
+const SAFETY_MARGIN = 0.5;
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 const SUM_MIN_REAL = 3, SUM_MAX_REAL = 15;
 const RAD_MARGIN_COEFF = 1.15;
 const SUM15_EPS_T = 0.995;
-const CLUSTER_PULL_FACTOR = 0.12;
-const OUT_OF_BOUNDS_PULL = 0.8;               // 拡散抑制: 内側へ戻す力を強める
+const CLUSTER_PULL_FACTOR = 0.5;
+const OUT_OF_BOUNDS_PULL = 0.1;               // 拡散抑制: 内側へ戻す力を強める
 const TOP_SPRITE_ALIGN = 'bottom';
 
 /* 新規追加定数 */
